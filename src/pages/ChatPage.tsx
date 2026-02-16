@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Paperclip, Image as ImageIcon, FileText, ArrowLeft, Bot, User as UserIcon } from 'lucide-react';
+import { Send, Paperclip, Image as ImageIcon, Bot, User as UserIcon, Plus, MessageSquare, Settings, LogOut, PanelLeftClose, PanelLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface Message {
@@ -13,10 +13,9 @@ interface Message {
 
 const ChatPage = () => {
     const navigate = useNavigate();
-    const [messages, setMessages] = useState<Message[]>([
-        { id: 1, text: "Greetings, Kenshi. I am Metsuke, the Eye. Show me what you seek to understand.", sender: 'bot', type: 'text' }
-    ]);
+    const [messages, setMessages] = useState<Message[]>([]);
     const [inputValue, setInputValue] = useState("");
+    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [isDragging, setIsDragging] = useState(false);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -28,7 +27,7 @@ const ChatPage = () => {
 
     useEffect(() => {
         scrollToBottom();
-    }, [messages]);
+    }, [messages, isAnalyzing]);
 
     const handleSendMessage = () => {
         if (!inputValue.trim()) return;
@@ -133,32 +132,56 @@ const ChatPage = () => {
     };
 
     return (
-        <div className="relative min-h-screen bg-dark text-paper font-sans flex flex-col overflow-hidden">
-             {/* Background */}
-             <div className="absolute inset-0 z-0">
-                 <img src="/assets/bg-chat.jpg" alt="Background" className="w-full h-full object-cover opacity-20 mix-blend-overlay" />
-                 <div className="absolute inset-0 bg-dark/80" />
-            </div>
+        <div className="flex h-screen bg-dark text-white font-sans overflow-hidden">
+            {/* Sidebar */}
+            <AnimatePresence mode="wait">
+                {isSidebarOpen && (
+                    <motion.aside
+                        initial={{ width: 0, opacity: 0 }}
+                        animate={{ width: 260, opacity: 1 }}
+                        exit={{ width: 0, opacity: 0 }}
+                        className="flex-shrink-0 bg-black/40 border-r border-white/5 flex flex-col"
+                    >
+                        <div className="p-4">
+                            <button 
+                                onClick={() => { setMessages([]); setInputValue(""); }}
+                                className="flex items-center space-x-2 w-full px-4 py-3 rounded-md border border-white/10 hover:bg-white/5 transition-colors text-sm text-white"
+                            >
+                                <Plus className="w-4 h-4" />
+                                <span>New Chat</span>
+                            </button>
+                        </div>
 
-            {/* Header */}
-            <header className="relative z-10 flex items-center justify-between px-6 py-4 border-b border-gold/20 bg-dark/50 backdrop-blur-md">
-                <div className="flex items-center space-x-3">
-                    <button onClick={() => navigate('/')} className="text-gold/70 hover:text-gold transition-colors">
-                        <ArrowLeft className="w-6 h-6" />
-                    </button>
-                    <h1 className="text-xl font-bold text-gold tracking-widest">METSUKE DOJO</h1>
-                </div>
-                <div className="flex items-center space-x-4">
-                     {/* Tools like PDF export can go here */}
-                     <button className="text-gray-400 hover:text-bordo transition-colors">
-                        <FileText className="w-5 h-5" />
-                     </button>
-                </div>
-            </header>
+                        <div className="flex-1 overflow-y-auto px-2 space-y-2">
+                            <div className="px-2 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Recent</div>
+                            {/* Mock History Items */}
+                            <button className="flex items-center space-x-2 w-full px-2 py-2 text-sm text-gray-300 hover:bg-white/5 rounded-md text-left truncate">
+                                <MessageSquare className="w-4 h-4 text-gray-500" />
+                                <span className="truncate">Samurai Code Analysis</span>
+                            </button>
+                            <button className="flex items-center space-x-2 w-full px-2 py-2 text-sm text-gray-300 hover:bg-white/5 rounded-md text-left truncate">
+                                <MessageSquare className="w-4 h-4 text-gray-500" />
+                                <span className="truncate">Visual Strategy</span>
+                            </button>
+                        </div>
 
-            {/* Chat Area */}
-            <div 
-                className="flex-1 relative z-10 overflow-y-auto p-6 space-y-6"
+                        <div className="p-2 border-t border-white/5 space-y-1">
+                            <button onClick={() => navigate('/explore')} className="flex items-center space-x-2 w-full px-3 py-3 text-sm text-gray-300 hover:bg-white/5 rounded-md">
+                                <Settings className="w-4 h-4" />
+                                <span>Explore Scrolls</span>
+                            </button>
+                             <button onClick={() => navigate('/')} className="flex items-center space-x-2 w-full px-3 py-3 text-sm text-gray-300 hover:bg-white/5 rounded-md">
+                                <LogOut className="w-4 h-4" />
+                                <span>Return to Gate</span>
+                            </button>
+                        </div>
+                    </motion.aside>
+                )}
+            </AnimatePresence>
+
+            {/* Main Content */}
+            <main 
+                className="flex-1 flex flex-col relative"
                 onDragOver={onDragOver}
                 onDragLeave={onDragLeave}
                 onDrop={onDrop}
@@ -170,102 +193,112 @@ const ChatPage = () => {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            className="absolute inset-0 z-50 bg-black/80 flex items-center justify-center border-4 border-dashed border-bordo m-4 rounded-xl"
+                            className="absolute inset-0 z-50 bg-black/80 flex items-center justify-center border-4 border-dashed border-white/20 m-4 rounded-xl"
                         >
                             <div className="text-center">
-                                <ImageIcon className="w-16 h-16 text-bordo mx-auto mb-4" />
-                                <h3 className="text-2xl text-gold font-bold">Offer your visual evidence</h3>
+                                <ImageIcon className="w-16 h-16 text-white/50 mx-auto mb-4" />
+                                <h3 className="text-2xl font-bold">Drop image to analyze</h3>
                             </div>
                         </motion.div>
                     )}
                 </AnimatePresence>
 
-                 {/* Analyzing Overlay */}
-                 <AnimatePresence>
-                    {isAnalyzing && (
-                        <motion.div 
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            className="absolute inset-x-0 top-0 z-40 bg-gold/10 p-2 text-center border-b border-gold"
-                        >
-                            <div className="flex items-center justify-center space-x-2 text-gold">
-                                <div className="w-2 h-2 bg-gold rounded-full animate-ping" />
-                                <span className="tracking-widest text-sm font-bold uppercase">Analyzing Visual Data...</span>
-                            </div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-
-                {messages.map((msg) => (
-                    <motion.div 
-                        key={msg.id}
-                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-                    >
-                         <div className={`flex items-end max-w-xl space-x-2 ${msg.sender === 'user' ? 'flex-row-reverse space-x-reverse' : 'flex-row'}`}>
-                            {/* Avatar */}
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center border ${msg.sender === 'bot' ? 'border-gold bg-dark' : 'border-bordo bg-dark'}`}>
-                                {msg.sender === 'bot' ? <Bot className="w-5 h-5 text-gold" /> : <UserIcon className="w-5 h-5 text-bordo" />}
-                            </div>
-
-                            {/* Bubble */}
-                            <div className={`
-                                p-4 rounded-2xl relative
-                                ${msg.sender === 'bot' 
-                                    ? 'bg-dark/80 border-l-2 border-gold text-paper rounded-bl-none shadow-[0_4px_20px_-5px_rgba(212,175,55,0.2)]' 
-                                    : 'bg-bordo/20 border-r-2 border-bordo text-white rounded-br-none shadow-[0_4px_20px_-5px_rgba(110,0,12,0.3)]'
-                                }
-                            `}>
-                                {msg.type === 'image' && msg.fileUrl && (
-                                    <div className="mb-2 rounded-lg overflow-hidden border border-white/10">
-                                        <img src={msg.fileUrl} alt="Upload" className="max-w-xs max-h-60 object-cover" />
-                                    </div>
-                                )}
-                                <p className="leading-relaxed">{msg.text}</p>
-                            </div>
-                         </div>
-                    </motion.div>
-                ))}
-                <div ref={messagesEndRef} />
-            </div>
-
-            {/* Input Area */}
-            <div className="relative z-10 p-4 bg-dark/80 border-t border-gold/10 backdrop-blur-lg">
-                <div className="max-w-4xl mx-auto flex items-center space-x-4">
+                {/* Header / Sidebar Toggle */}
+                <div className="flex items-center p-4">
                     <button 
-                        onClick={() => fileInputRef.current?.click()}
-                        className="p-2 text-gold/50 hover:text-gold hover:bg-gold/10 rounded-full transition-colors"
+                        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                        className="text-gray-400 hover:text-white transition-colors"
                     >
-                        <Paperclip className="w-6 h-6" />
-                        <input 
-                            type="file" 
-                            ref={fileInputRef} 
-                            className="hidden" 
-                            accept="image/*"
-                            onChange={handleFileUpload}
-                        />
+                        {isSidebarOpen ? <PanelLeftClose className="w-6 h-6" /> : <PanelLeft className="w-6 h-6" />}
                     </button>
-                    <div className="flex-1 relative">
-                        <input 
-                            type="text" 
-                            value={inputValue}
-                            onChange={(e) => setInputValue(e.target.value)}
-                            onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-                            placeholder="Consult the oracle..."
-                            className="w-full bg-black/40 border border-gold/20 rounded-full py-3 pl-6 pr-12 text-paper focus:outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/50 transition-all placeholder:text-gray-600"
-                        />
-                        <button 
-                            onClick={handleSendMessage}
-                            className={`absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-full transition-colors ${inputValue.trim() ? 'bg-gold text-dark hover:bg-yellow-600' : 'bg-transparent text-gray-600 cursor-not-allowed'}`}
-                            disabled={!inputValue.trim()}
-                        >
-                            <Send className="w-4 h-4" />
-                        </button>
+                    <span className="ml-4 font-semibold text-gray-200">Metsuke 5.2 Pro</span>
+                </div>
+
+                {/* Chat Area */}
+                <div className="flex-1 overflow-y-auto">
+                    {messages.length === 0 ? (
+                        <div className="h-full flex flex-col items-center justify-center text-center p-8 space-y-6">
+                            <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mb-4">
+                                <Bot className="w-8 h-8 text-white" />
+                            </div>
+                            <h2 className="text-3xl font-bold">Hey Warrior. Ready to dive in?</h2>
+                        </div>
+                    ) : (
+                        <div className="flex flex-col space-y-6 p-4 md:p-8 max-w-3xl mx-auto w-full">
+                            {messages.map((msg) => (
+                                <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+                                    <div className={`flex items-start max-w-2xl space-x-3 ${msg.sender === 'user' ? 'flex-row-reverse space-x-reverse' : 'flex-row'}`}>
+                                        <div className={`w-8 h-8 rounded-sm flex-shrink-0 flex items-center justify-center ${msg.sender === 'bot' ? 'bg-teal-600' : 'bg-gray-600'}`}>
+                                            {msg.sender === 'bot' ? <Bot className="w-5 h-5 text-white" /> : <UserIcon className="w-5 h-5 text-white" />}
+                                        </div>
+                                        <div className={`text-sm md:text-base leading-relaxed p-3 rounded-xl ${msg.sender === 'user' ? 'bg-white/10' : ''}`}>
+                                            {msg.type === 'image' && msg.fileUrl && (
+                                                <div className="mb-3 rounded-lg overflow-hidden border border-white/10">
+                                                    <img src={msg.fileUrl} alt="Upload" className="max-w-md max-h-80 object-cover" />
+                                                </div>
+                                            )}
+                                            <p>{msg.text}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                            <div ref={messagesEndRef} />
+                             {isAnalyzing && (
+                                <div className="flex items-start max-w-2xl space-x-3">
+                                    <div className="w-8 h-8 rounded-sm bg-teal-600 flex items-center justify-center">
+                                       <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </div>
+
+                {/* Input Area */}
+                <div className="p-4 pb-6">
+                    <div className="max-w-3xl mx-auto relative">
+                        <div className="relative bg-white/5 border border-white/10 rounded-2xl flex items-end p-3 shadow-lg focus-within:border-white/20 transition-colors">
+                            <button 
+                                onClick={() => fileInputRef.current?.click()}
+                                className="p-2 text-gray-400 hover:text-white rounded-lg transition-colors"
+                            >
+                                <Paperclip className="w-5 h-5" />
+                                <input 
+                                    type="file" 
+                                    ref={fileInputRef} 
+                                    className="hidden" 
+                                    accept="image/*"
+                                    onChange={handleFileUpload}
+                                />
+                            </button>
+                            <textarea 
+                                value={inputValue}
+                                onChange={(e) => setInputValue(e.target.value)}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' && !e.shiftKey) {
+                                        e.preventDefault();
+                                        handleSendMessage();
+                                    }
+                                }}
+                                placeholder="Ask anything to MetsukeAI..."
+                                className="w-full bg-transparent border-none text-white focus:ring-0 resize-none max-h-40 py-2 px-3 placeholder:text-gray-500 scrollbar-hide"
+                                rows={1}
+                                style={{ minHeight: '44px' }}
+                            />
+                            <button 
+                                onClick={handleSendMessage}
+                                disabled={!inputValue.trim()}
+                                className={`p-2 rounded-lg transition-colors ${inputValue.trim() ? 'bg-white text-dark' : 'bg-white/10 text-gray-500 cursor-not-allowed'}`}
+                            >
+                                <Send className="w-4 h-4" />
+                            </button>
+                        </div>
+                        <div className="text-center mt-2">
+                             <p className="text-xs text-gray-500">MetsukeAI can make mistakes. Consider checking ancient scrolls.</p>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </main>
         </div>
     );
 };
