@@ -14,13 +14,31 @@
   }
 }
 
+@layer utilities {
+  .glass-panel {
+    @apply bg-dark/70 backdrop-blur-md border border-white/10;
+  }
+  
+  .glass-panel-gold {
+    @apply bg-dark/70 backdrop-blur-md border border-gold/20;
+  }
+
+  .text-glow-gold {
+    text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+  }
+  
+  .text-glow-bordo {
+    text-shadow: 0 0 10px rgba(110, 0, 12, 0.5);
+  }
+}
+
 /* Custom scrollbar for webkit */
 ::-webkit-scrollbar {
   width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0B0B0D;
+  background: rgba(11, 11, 13, 0.8);
 }
 
 ::-webkit-scrollbar-thumb {

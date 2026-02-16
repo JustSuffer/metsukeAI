@@ -37,8 +37,8 @@ const LandingPage = () => {
             {/* Hero Section */}
             <section ref={targetRef} className="relative h-screen flex flex-col items-center justify-center overflow-hidden">
                 <div className="absolute inset-0 z-0">
-                    <img src="/assets/bg-main.jpg" alt="Background" className="w-full h-full object-cover opacity-40 mix-blend-overlay" />
-                    <div className="absolute inset-0 bg-gradient-to-b from-dark/30 via-dark/60 to-dark" />
+                    <img src="/assets/bg-main.jpg" alt="Background" className="w-full h-full object-cover opacity-60 mix-blend-overlay" />
+                    <div className="absolute inset-0 bg-gradient-to-b from-dark/50 via-dark/70 to-dark" />
                 </div>
 
                 <motion.div 
