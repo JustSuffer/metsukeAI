@@ -67,6 +67,10 @@ const AuthPage = () => {
                     <X className="w-6 h-6" />
                 </button>
 
+                <div className="mb-8">
+                    <img src="/assets/logo.png" alt="MetsukeAI" className="w-16 h-16 object-contain drop-shadow-[0_0_15px_rgba(212,175,55,0.5)]" />
+                </div>
+
                 <h1 className="text-3xl font-bold mb-6 text-center tracking-tight">Oturum aç veya kaydol</h1>
                 <p className="text-center text-white/80 mb-8 max-w-sm leading-relaxed">
                     Daha zeki yanıtlar alabilir, dosya ve görsel yükleyebilir ve çok daha fazlasını yapabilirsin.

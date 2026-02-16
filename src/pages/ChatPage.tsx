@@ -227,7 +227,10 @@ const ChatPage = () => {
                     >
                         {isSidebarOpen ? <PanelLeftClose className="w-6 h-6" /> : <PanelLeft className="w-6 h-6" />}
                     </button>
-                    <span className="ml-4 font-bold text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-200 to-gray-500">Metsuke 5.2 Pro</span>
+                    <span className="ml-4 font-bold text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-200 to-gray-500 flex items-center gap-2">
+                        <img src="/assets/logo.png" alt="Logo" className="w-8 h-8 object-contain" />
+                        Metsuke 5.2 Pro
+                    </span>
                 </div>
 
                 {/* Chat Area */}

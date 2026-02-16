@@ -53,9 +53,9 @@ const LandingPage = () => {
                     >
                          <div className="absolute inset-0 bg-gold/20 blur-3xl rounded-full" />
                          <img 
-                            src="/assets/logo.jpg" 
+                            src="/assets/logo.png" 
                             alt="MetsukeAI Logo" 
-                            className="w-40 h-40 md:w-56 md:h-56 rounded-full border border-gold/30 shadow-2xl relative z-10"
+                            className="w-40 h-40 md:w-56 md:h-56 object-contain drop-shadow-[0_0_30px_rgba(212,175,55,0.4)] relative z-10"
                         />
                     </motion.div>
 
