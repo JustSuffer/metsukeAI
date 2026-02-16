@@ -52,7 +52,7 @@ const AuthPage = () => {
         <div className="min-h-screen flex items-center justify-center bg-dark text-white font-sans relative overflow-hidden">
             {/* Background Image */}
             <div className="absolute inset-0 z-0">
-                <img src="/assets/bg-chat.jpg" alt="Background" className="w-full h-full object-cover opacity-60" />
+                <img src="/assets/bg-auth-final.jpg" alt="Auth Background" className="w-full h-full object-cover opacity-60" />
                 <div className="absolute inset-0 bg-black/60 mix-blend-multiply" />
             </div>
 
