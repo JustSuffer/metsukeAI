@@ -41,8 +41,8 @@ const ExplorePage = () => {
         <div className="relative min-h-screen bg-dark text-paper font-sans overflow-x-hidden">
             {/* Background */}
             <div className="absolute inset-0 z-0">
-                 <img src="/assets/bg-main.jpg" alt="Background" className="w-full h-full object-cover opacity-20 mix-blend-overlay" />
-                 <div className="absolute inset-0 bg-dark/90" />
+                 <img src="/assets/bg-chat.jpg" alt="Background" className="w-full h-full object-cover opacity-30" />
+                 <div className="absolute inset-0 bg-dark/90 mix-blend-multiply" />
             </div>
 
             {/* Header */}

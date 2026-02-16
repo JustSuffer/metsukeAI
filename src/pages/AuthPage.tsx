@@ -49,30 +49,33 @@ const AuthPage = () => {
     );
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-black/95 text-white p-4 font-sans">
-            {/* Close Button Positioned at top right of the page similar to the screenshot's 'modal' feel, 
-                or we can put it inside the card. Reference shows it on the modal content. */}
+        <div className="min-h-screen flex items-center justify-center bg-dark text-white font-sans relative overflow-hidden">
+            {/* Background Image */}
+            <div className="absolute inset-0 z-0">
+                <img src="/assets/bg-chat.jpg" alt="Background" className="w-full h-full object-cover opacity-60" />
+                <div className="absolute inset-0 bg-black/60 mix-blend-multiply" />
+            </div>
+
+            {/* Close Button Positioned at top right */}
+            <button 
+                onClick={() => navigate('/')}
+                className="absolute top-6 right-6 z-20 p-2 hover:bg-white/10 rounded-full transition-colors text-white/70 hover:text-white"
+            >
+                <X className="w-6 h-6" />
+            </button>
             
             <motion.div 
-                className="w-full max-w-[400px] flex flex-col items-center relative"
+                className="w-full max-w-[400px] flex flex-col items-center relative z-10 p-6"
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.3 }}
             >
-                {/* Close Button */}
-                <button 
-                    onClick={() => navigate('/')}
-                    className="absolute -top-12 right-0 md:-right-12 p-2 hover:bg-white/10 rounded-full transition-colors text-white/70 hover:text-white"
-                >
-                    <X className="w-6 h-6" />
-                </button>
-
                 <div className="mb-8">
-                    <img src="/assets/logo.png" alt="MetsukeAI" className="w-16 h-16 object-contain drop-shadow-[0_0_15px_rgba(212,175,55,0.5)]" />
+                    <img src="/assets/logo.png" alt="MetsukeAI" className="w-20 h-20 object-contain drop-shadow-[0_0_20px_rgba(212,175,55,0.3)]" />
                 </div>
 
-                <h1 className="text-3xl font-bold mb-6 text-center tracking-tight">Oturum aç veya kaydol</h1>
-                <p className="text-center text-white/80 mb-8 max-w-sm leading-relaxed">
+                <h1 className="text-3xl font-bold mb-4 text-center tracking-tight">Oturum aç veya kaydol</h1>
+                <p className="text-center text-gray-300 mb-8 max-w-sm leading-relaxed text-sm">
                     Daha zeki yanıtlar alabilir, dosya ve görsel yükleyebilir ve çok daha fazlasını yapabilirsin.
                 </p>
 
@@ -84,9 +87,9 @@ const AuthPage = () => {
                 </div>
 
                 <div className="w-full flex items-center gap-3 my-6">
-                    <div className="h-px bg-white/20 flex-1" />
-                    <span className="text-xs text-white/50 font-medium tracking-wider">YA DA</span>
-                    <div className="h-px bg-white/20 flex-1" />
+                    <div className="h-px bg-white/10 flex-1" />
+                    <span className="text-xs text-gray-500 font-medium tracking-wider">YA DA</span>
+                    <div className="h-px bg-white/10 flex-1" />
                 </div>
 
                 <form className="w-full space-y-4" onSubmit={handleLogin}>
@@ -96,12 +99,12 @@ const AuthPage = () => {
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="E-posta adresi" 
                         required
-                        className="w-full bg-transparent border border-white/20 rounded-lg p-4 text-white placeholder:text-gray-500 focus:outline-none focus:border-white focus:ring-1 focus:ring-white transition-all text-base"
+                        className="w-full bg-black/40 border border-white/10 rounded-lg p-3.5 text-white placeholder:text-gray-500 focus:outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/20 transition-all text-base"
                     />
                     
                     <button 
                         type="submit"
-                        className="w-full bg-white text-black font-bold py-3.5 rounded-full hover:bg-gray-200 transition-colors text-lg"
+                        className="w-full bg-white text-black font-bold py-3.5 rounded-full hover:bg-gray-200 transition-colors text-base mt-2"
                     >
                         Devam
                     </button>
