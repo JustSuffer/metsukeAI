@@ -7,13 +7,13 @@ const AuthPage = () => {
     const navigate = useNavigate();
     const [email, setEmail] = useState("");
 
-    const handleLogin = (e: React.FormEvent) => {
+    const handleLogin = (e: React.FormEvent | React.MouseEvent) => {
         e.preventDefault();
         localStorage.setItem('metsuke_auth', 'true');
         navigate('/chat');
     };
 
-    const SocialButton = ({ icon, text, onClick }: { icon: React.ReactNode, text: string, onClick?: () => void }) => (
+    const SocialButton = ({ icon, text, onClick }: { icon: React.ReactNode, text: string, onClick?: React.MouseEventHandler }) => (
         <button 
             onClick={onClick}
             className="w-full flex items-center justify-start px-4 py-3 mb-3 border border-white/20 rounded-lg hover:bg-white/5 transition-colors text-white font-medium relative group"
