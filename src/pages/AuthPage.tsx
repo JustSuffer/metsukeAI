@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { Mail, Lock, AlertCircle } from "lucide-react";
+import { Mail, Lock, AlertCircle, Info } from "lucide-react";
 import { supabase, isSupabaseConfigured } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { toast } from "sonner";
@@ -69,6 +69,7 @@ const AuthPage = () => {
         toast.success(t('auth.success'));
       }
     } catch (err: any) {
+      console.error("Auth Error:", err);
       toast.error(err.message || t('auth.errorGeneral'));
     } finally {
       setLoading(false);
@@ -124,6 +125,18 @@ const AuthPage = () => {
             </div>
           </div>
         )}
+
+        {/* Debug Info */}
+        <div className="w-full mb-6 p-4 bg-muted/50 border border-border rounded-lg text-xs font-mono text-muted-foreground">
+            <div className="flex items-center gap-2 mb-2 text-foreground font-semibold">
+                <Info className="w-3 h-3" />
+                <span>Debug Bilgisi</span>
+            </div>
+            <p>Supabase Configured: {isSupabaseConfigured ? "✅ Evet" : "❌ Hayır"}</p>
+            <p className="truncate">URL: {import.meta.env.VITE_SUPABASE_URL || "❌ Tanımsız"}</p>
+            <p>Key: {import.meta.env.VITE_SUPABASE_ANON_KEY ? "✅ Tanımlı" : "❌ Tanımsız"}</p>
+        </div>
+
 
         {/* Social Buttons */}
         <div className="w-full space-y-3 mb-6">
