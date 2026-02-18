@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
-import bgLanding from "../assets/bg-landing.jpeg";
+import bgLanding from "../assets/bg-auth-final.jpg";
 
 const features = [
   {
