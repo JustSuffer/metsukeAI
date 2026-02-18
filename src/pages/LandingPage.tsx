@@ -3,31 +3,30 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import logo from "@/assets/logo.png";
 import bgLanding from "@/assets/bg-landing.jpeg";
-
-const features = [
-  {
-    title: "Yapay Zekâ Sohbet",
-    subtitle: "Meditasyon Odası",
-    description:
-      "Llama 3.2 Vision destekli çoklu modlu yapay zekâ asistanınız. Metin, görsel analizi ve görsel üretimi tek bir yerde.",
-  },
-  {
-    title: "Topluluk Platformu",
-    subtitle: "Bilgelik Tomarları",
-    description:
-      "Makalelerinizi paylaşın, PDF yükleyin ve toplulukla etkileşime geçin. Bilgi paylaşıldıkça büyür.",
-  },
-  {
-    title: "Görsel Üretimi",
-    subtitle: "Sanatçının Fırçası",
-    description:
-      "'!çiz' komutuyla hayal gücünüzü görselleştirin. AI destekli görsel üretim, bir komut uzağınızda.",
-  },
-];
+import { useTranslation } from "react-i18next";
 
 const LandingPage = () => {
   const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
+  const { t } = useTranslation();
+
+  const features = [
+    {
+      title: t('landing.features.chat.title'),
+      subtitle: t('landing.features.chat.subtitle'),
+      description: t('landing.features.chat.desc'),
+    },
+    {
+      title: t('landing.features.community.title'),
+      subtitle: t('landing.features.community.subtitle'),
+      description: t('landing.features.community.desc'),
+    },
+    {
+      title: t('landing.features.image.title'),
+      subtitle: t('landing.features.image.subtitle'),
+      description: t('landing.features.image.desc'),
+    },
+  ];
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -70,7 +69,7 @@ const LandingPage = () => {
             animate={{ opacity: 1, y: 0, letterSpacing: "0.15em" }}
             transition={{ duration: 1.4, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
           >
-            Metsuke<span className="text-secondary">AI</span>
+            {t('landing.hero.title')}<span className="text-secondary">AI</span>
           </motion.h1>
 
           <motion.p
@@ -79,7 +78,7 @@ const LandingPage = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.9 }}
           >
-            Yapay zekâ ile güçlendirilmiş dijital dojo'nuza hoş geldiniz
+            {t('landing.hero.subtitle')}
           </motion.p>
 
           <motion.button
@@ -91,7 +90,7 @@ const LandingPage = () => {
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.98 }}
           >
-            <span className="relative z-10">Yolculuğa Başla</span>
+            <span className="relative z-10">{t('landing.hero.cta')}</span>
             <div className="absolute inset-0 bg-secondary/10 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-700" />
           </motion.button>
         </div>
@@ -104,7 +103,7 @@ const LandingPage = () => {
           transition={{ delay: 2 }}
         >
           <span className="text-xs text-muted-foreground tracking-[0.3em] uppercase font-light">
-            Keşfet
+            {t('landing.hero.scroll')}
           </span>
           <motion.div
             className="w-px h-8 bg-secondary/50"
@@ -179,11 +178,11 @@ const LandingPage = () => {
           transition={{ duration: 1 }}
         >
           <h2 className="text-3xl md:text-5xl font-serif font-bold text-foreground">
-            Hazır mısınız?
+            {t('landing.footer.ready')}
           </h2>
           <div className="mx-auto mt-4 w-16 h-px bg-secondary/60" />
           <p className="mt-6 text-muted-foreground text-lg font-light">
-            MetsukeAI ile yolculuğunuz burada başlıyor.
+            {t('landing.footer.desc')}
           </p>
           <motion.button
             onClick={() => navigate("/auth")}
@@ -191,7 +190,7 @@ const LandingPage = () => {
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.98 }}
           >
-            Başla
+            {t('landing.footer.start')}
           </motion.button>
         </motion.div>
       </section>

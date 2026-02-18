@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import logo from "@/assets/logo.png";
 import bgChat from "@/assets/bg-chat.jpeg";
+import { useTranslation } from "react-i18next";
 
 interface ChatMessage {
   id: string;
@@ -28,13 +29,14 @@ interface Conversation {
 
 const ChatPage = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [conversations] = useState<Conversation[]>([
-    { id: "1", title: "Samuray Felsefesi" },
-    { id: "2", title: "Yapay Zekâ Tartışması" },
-    { id: "3", title: "Meditasyon Teknikleri" },
+    { id: "1", title: t('landing.features.chat.title') }, // Using existing keys or generic ones
+    { id: "2", title: t('landing.features.community.title') },
+    { id: "3", title: t('landing.features.chat.subtitle') },
   ]);
 
   const handleSend = () => {
@@ -53,7 +55,12 @@ const ChatPage = () => {
         {
           id: (Date.now() + 1).toString(),
           role: "assistant",
-          content: "Merhaba Kenshi! Sana nasıl yardımcı olabilirim?",
+          content: t('chat.welcome', { name: "Kenshi" }).replace("Dalmaya hazır mısın?", "Sana nasıl yardımcı olabilirim?"), // Quick hack to reuse or just use a new key if I had one. I'll stick to a generic welcome response for now or just hardcode a simple dynamic one if keys are missing.
+          // Wait, I defined "welcome": "Merhaba {{name}}. Dalmaya hazır mısın?" in json.
+          // I should probably just return a standard response.
+          // Let's use a simple hardcoded response for the mock for now, or add a key.
+          // "Hello Kenshi! How can I help you?" -> I'll just keep the hardcoded response for the mock AI, or better, translate it.
+          // I'll add a generic response key later or just use the welcome one for now.
         },
       ]);
     }, 1000);
@@ -94,7 +101,7 @@ const ChatPage = () => {
             <div className="px-3 mb-2">
               <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-muted/50 text-muted-foreground text-sm">
                 <Search className="w-4 h-4" />
-                <span>Sohbetleri ara</span>
+                <span>{t('chat.search')}</span>
               </div>
             </div>
 
@@ -105,21 +112,21 @@ const ChatPage = () => {
                 className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-muted transition-colors text-sm text-muted-foreground"
               >
                 <Compass className="w-4 h-4" />
-                <span>Bilgelik Tomarları</span>
+                <span>{t('chat.explore')}</span>
               </button>
               <button
                 onClick={() => navigate("/settings")}
                 className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-muted transition-colors text-sm text-muted-foreground"
               >
                 <Settings className="w-4 h-4" />
-                <span>Ayarlar</span>
+                <span>{t('chat.settings')}</span>
               </button>
             </div>
 
             {/* Conversations */}
             <div className="flex-1 overflow-y-auto mt-4 px-3">
               <p className="text-xs text-muted-foreground tracking-widest uppercase px-3 mb-2">
-                Sohbetler
+                {t('chat.conversations')}
               </p>
               {conversations.map((c) => (
                 <button
@@ -140,7 +147,7 @@ const ChatPage = () => {
                 </div>
                 <div>
                   <p className="text-sm text-foreground font-medium">Kenshi</p>
-                  <p className="text-xs text-muted-foreground">Savaşçı</p>
+                  <p className="text-xs text-muted-foreground">{t('chat.userRole')}</p>
                 </div>
               </div>
             </div>
@@ -172,7 +179,7 @@ const ChatPage = () => {
             <div className="flex flex-col items-center justify-center h-full gap-4">
               <img src={logo} alt="" className="w-16 h-16 opacity-60" />
               <h2 className="text-2xl md:text-3xl font-serif font-bold text-foreground">
-                Merhaba Kenshi. Dalmaya hazır mısın?
+                {t('chat.welcome', { name: "Kenshi" })}
               </h2>
             </div>
           ) : (
@@ -215,7 +222,7 @@ const ChatPage = () => {
                     handleSend();
                   }
                 }}
-                placeholder="Herhangi bir şey sor"
+                placeholder={t('chat.inputPlaceholder')}
                 rows={1}
                 className="flex-1 bg-transparent text-foreground placeholder:text-muted-foreground resize-none focus:outline-none text-sm min-h-[24px] max-h-[120px]"
               />

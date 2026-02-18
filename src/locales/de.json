@@ -1,0 +1,86 @@
+{
+  "landing": {
+    "hero": {
+      "title": "Metsuke",
+      "subtitle": "Willkommen in deinem digitalen Dojo, angetrieben von KI",
+      "cta": "Reise Starten",
+      "scroll": "Erkunden"
+    },
+    "features": {
+      "chat": {
+        "title": "KI-Chat",
+        "subtitle": "Meditationsraum",
+        "desc": "Dein multimodaler KI-Assistent, unterstützt von Llama 3.2 Vision. Text, Bildanalyse und Generierung an einem Ort."
+      },
+      "community": {
+        "title": "Community-Plattform",
+        "subtitle": "Rollen der Weisheit",
+        "desc": "Teile deine Artikel, lade PDFs hoch und interagiere mit der Community. Wissen wächst, wenn man es teilt."
+      },
+      "image": {
+        "title": "Bildgenerierung",
+        "subtitle": "Pinsel des Künstlers",
+        "desc": "Visualisiere deine Fantasie mit dem Befehl '!draw'. KI-gestützte Bildgenerierung ist nur einen Befehl entfernt."
+      }
+    },
+    "footer": {
+      "ready": "Bist du bereit?",
+      "desc": "Deine Reise mit MetsukeAI beginnt hier.",
+      "start": "Starten"
+    }
+  },
+  "auth": {
+    "welcome": "Anmelden oder Registrieren",
+    "createAccount": "Konto erstellen",
+    "subtitle": "Erhalte intelligentere Antworten, lade Dateien und Bilder hoch und vieles mehr.",
+    "google": "Weiter mit Google",
+    "apple": "Weiter mit Apple",
+    "or": "Oder",
+    "email": "E-Mail-Adresse",
+    "password": "Passwort",
+    "login": "Anmelden",
+    "signup": "Registrieren",
+    "loading": "Lädt...",
+    "noAccount": "Kein Konto? Registrieren",
+    "hasAccount": "Bereits ein Konto? Anmelden",
+    "success": "Bestätigungs-E-Mail gesendet. Bitte überprüfe deine E-Mails.",
+    "errorGeneral": "Ein Fehler ist aufgetreten",
+    "configError": "Supabase-Verbindung nicht konfiguriert. Bitte überprüfe deine .env-Datei.",
+    "configErrorDesc": "VITE_SUPABASE_URL und VITE_SUPABASE_ANON_KEY sind für Registrierung und Anmeldung erforderlich."
+  },
+  "chat": {
+    "search": "Chats durchsuchen",
+    "explore": "Rollen der Weisheit",
+    "settings": "Einstellungen",
+    "conversations": "Gespräche",
+    "welcome": "Hallo {{name}}. Bereit einzutauchen?",
+    "inputPlaceholder": "Frag irgendetwas",
+    "userRole": "Krieger"
+  },
+  "explore": {
+    "title": "Rollen der Weisheit",
+    "subtitle": "Weisheiten aus der Community",
+    "share": "Beitrag teilen",
+    "categories": {
+      "all": "Alle",
+      "philosophy": "Philosophie",
+      "technology": "Technologie",
+      "art": "Kunst",
+      "history": "Geschichte"
+    }
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "profile": "Profil",
+    "name": "Name",
+    "bio": "Bio",
+    "membership": "Mitgliedschaft",
+    "freePlan": "Kostenloser Plan",
+    "basicFeatures": "Grundfunktionen",
+    "upgrade": "Upgrade",
+    "account": "Konto",
+    "changePassword": "Passwort ändern",
+    "logout": "Abmelden",
+    "language": "Sprache"
+  }
+}

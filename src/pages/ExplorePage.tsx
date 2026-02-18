@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Heart, MessageCircle, Plus, FileText } from "lucide-react";
 import logo from "@/assets/logo.png";
 import bgExplore from "@/assets/bg-explore.jpeg";
+import { useTranslation } from "react-i18next";
 
 interface Article {
   id: string;
@@ -15,44 +16,51 @@ interface Article {
   category: string;
 }
 
-const mockArticles: Article[] = [
-  {
-    id: "1",
-    title: "Bushido: Savaşçının Yedi Erdemi",
-    excerpt: "Samuray ahlak kurallarının modern yaşamdaki yansımaları ve uygulanabilirliği üzerine...",
-    author: "Kenshi",
-    likes: 24,
-    comments: 5,
-    category: "Felsefe",
-  },
-  {
-    id: "2",
-    title: "Zen ve Yapay Zekâ",
-    excerpt: "Meditasyon pratikleri ile makine öğrenmesi arasındaki şaşırtıcı paralellikler...",
-    author: "Ronin",
-    likes: 18,
-    comments: 3,
-    category: "Teknoloji",
-  },
-  {
-    id: "3",
-    title: "Katana Yapımının Sanatı",
-    excerpt: "Geleneksel Japon kılıç yapımının incelikleri ve ustanın sabır dersleri...",
-    author: "Takeshi",
-    likes: 31,
-    comments: 8,
-    category: "Sanat",
-  },
-];
-
-const categories = ["Tümü", "Felsefe", "Teknoloji", "Sanat", "Tarih"];
-
 const ExplorePage = () => {
   const navigate = useNavigate();
-  const [selectedCategory, setSelectedCategory] = useState("Tümü");
+  const { t } = useTranslation();
+  const [selectedCategory, setSelectedCategory] = useState("all");
+
+  const categories = [
+    { id: "all", label: t('explore.categories.all') },
+    { id: "philosophy", label: t('explore.categories.philosophy') },
+    { id: "technology", label: t('explore.categories.technology') },
+    { id: "art", label: t('explore.categories.art') },
+    { id: "history", label: t('explore.categories.history') },
+  ];
+
+  const mockArticles: Article[] = [
+    {
+      id: "1",
+      title: "Bushido: Savaşçının Yedi Erdemi", // Content can remain hardcoded or moved to json if needed, but for now structure is key.
+      excerpt: "Samuray ahlak kurallarının modern yaşamdaki yansımaları ve uygulanabilirliği üzerine...",
+      author: "Kenshi",
+      likes: 24,
+      comments: 5,
+      category: "philosophy",
+    },
+    {
+      id: "2",
+      title: "Zen ve Yapay Zekâ",
+      excerpt: "Meditasyon pratikleri ile makine öğrenmesi arasındaki şaşırtıcı paralellikler...",
+      author: "Ronin",
+      likes: 18,
+      comments: 3,
+      category: "technology",
+    },
+    {
+      id: "3",
+      title: "Katana Yapımının Sanatı",
+      excerpt: "Geleneksel Japon kılıç yapımının incelikleri ve ustanın sabır dersleri...",
+      author: "Takeshi",
+      likes: 31,
+      comments: 8,
+      category: "art",
+    },
+  ];
 
   const filtered =
-    selectedCategory === "Tümü"
+    selectedCategory === "all"
       ? mockArticles
       : mockArticles.filter((a) => a.category === selectedCategory);
 
@@ -84,7 +92,7 @@ const ExplorePage = () => {
           whileTap={{ scale: 0.98 }}
         >
           <Plus className="w-4 h-4" />
-          Yazı Paylaş
+          {t('explore.share')}
         </motion.button>
       </header>
 
@@ -96,25 +104,25 @@ const ExplorePage = () => {
           transition={{ duration: 0.6 }}
         >
           <h1 className="text-3xl md:text-4xl font-serif font-bold text-foreground mb-2">
-            Bilgelik Tomarları
+            {t('explore.title')}
           </h1>
           <p className="text-muted-foreground mb-8">
-            Topluluktan bilgelik paylaşımları
+            {t('explore.subtitle')}
           </p>
 
           {/* Categories */}
           <div className="flex gap-2 mb-8 flex-wrap">
             {categories.map((cat) => (
               <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
+                key={cat.id}
+                onClick={() => setSelectedCategory(cat.id)}
                 className={`px-4 py-2 rounded-lg text-sm transition-colors ${
-                  selectedCategory === cat
+                  selectedCategory === cat.id
                     ? "bg-primary text-primary-foreground"
                     : "bg-card border border-border text-muted-foreground hover:text-foreground"
                 }`}
               >
-                {cat}
+                {cat.label}
               </button>
             ))}
           </div>
@@ -132,7 +140,7 @@ const ExplorePage = () => {
                 <div className="flex items-center gap-2 mb-3">
                   <FileText className="w-4 h-4 text-secondary" />
                   <span className="text-xs text-secondary font-medium uppercase tracking-wider">
-                    {article.category}
+                    {t(`explore.categories.${article.category}`) || article.category}
                   </span>
                 </div>
                 <h3 className="text-lg font-serif font-bold text-foreground mb-2">

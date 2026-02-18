@@ -1,11 +1,17 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, User, Crown, Shield, LogOut } from "lucide-react";
+import { ArrowLeft, User, Crown, Shield, LogOut, Globe } from "lucide-react";
 import logo from "@/assets/logo.png";
 import bgSettings from "@/assets/bg-settings.jpeg";
+import { useTranslation } from "react-i18next";
 
 const SettingsPage = () => {
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
+
+  const changeLanguage = (lng: string) => {
+    i18n.changeLanguage(lng);
+  };
 
   return (
     <div className="min-h-screen relative">
@@ -38,14 +44,29 @@ const SettingsPage = () => {
           className="space-y-8"
         >
           <h1 className="text-3xl font-serif font-bold text-foreground">
-            Ayarlar
+            {t('settings.title')}
           </h1>
+
+          {/* Language Selection */}
+          <section className="bg-card/80 backdrop-blur-sm border border-border rounded-xl p-6">
+            <div className="flex items-center gap-2 mb-4 text-secondary">
+              <Globe className="w-5 h-5" />
+              <h2 className="font-serif font-semibold text-foreground">{t('settings.language')}</h2>
+            </div>
+            <div className="flex gap-2 flex-wrap">
+               <button onClick={() => changeLanguage('tr')} className={`px-4 py-2 rounded-lg text-sm border ${i18n.language === 'tr' ? 'bg-primary text-primary-foreground border-primary' : 'bg-muted text-foreground border-border hover:border-secondary'}`}>Türkçe</button>
+               <button onClick={() => changeLanguage('en')} className={`px-4 py-2 rounded-lg text-sm border ${i18n.language === 'en' ? 'bg-primary text-primary-foreground border-primary' : 'bg-muted text-foreground border-border hover:border-secondary'}`}>English</button>
+               <button onClick={() => changeLanguage('de')} className={`px-4 py-2 rounded-lg text-sm border ${i18n.language === 'de' ? 'bg-primary text-primary-foreground border-primary' : 'bg-muted text-foreground border-border hover:border-secondary'}`}>Deutsch</button>
+               <button onClick={() => changeLanguage('es')} className={`px-4 py-2 rounded-lg text-sm border ${i18n.language === 'es' ? 'bg-primary text-primary-foreground border-primary' : 'bg-muted text-foreground border-border hover:border-secondary'}`}>Español</button>
+               <button onClick={() => changeLanguage('ja')} className={`px-4 py-2 rounded-lg text-sm border ${i18n.language === 'ja' ? 'bg-primary text-primary-foreground border-primary' : 'bg-muted text-foreground border-border hover:border-secondary'}`}>日本語</button>
+            </div>
+          </section>
 
           {/* Profile Section */}
           <section className="bg-card/80 backdrop-blur-sm border border-border rounded-xl p-6">
             <div className="flex items-center gap-2 mb-4 text-secondary">
               <User className="w-5 h-5" />
-              <h2 className="font-serif font-semibold text-foreground">Profil</h2>
+              <h2 className="font-serif font-semibold text-foreground">{t('settings.profile')}</h2>
             </div>
             <div className="flex items-center gap-4 mb-6">
               <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xl font-bold font-serif">
@@ -59,7 +80,7 @@ const SettingsPage = () => {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm text-muted-foreground mb-1">
-                  İsim
+                  {t('settings.name')}
                 </label>
                 <input
                   type="text"
@@ -69,7 +90,7 @@ const SettingsPage = () => {
               </div>
               <div>
                 <label className="block text-sm text-muted-foreground mb-1">
-                  Biyografi
+                  {t('settings.bio')}
                 </label>
                 <textarea
                   defaultValue="Dijital dojo'nun savaşçısı"
@@ -84,13 +105,13 @@ const SettingsPage = () => {
           <section className="bg-card/80 backdrop-blur-sm border border-border rounded-xl p-6">
             <div className="flex items-center gap-2 mb-4 text-secondary">
               <Crown className="w-5 h-5" />
-              <h2 className="font-serif font-semibold text-foreground">Üyelik</h2>
+              <h2 className="font-serif font-semibold text-foreground">{t('settings.membership')}</h2>
             </div>
             <div className="flex items-center justify-between p-4 bg-muted rounded-lg">
               <div>
-                <p className="text-foreground font-semibold">Ücretsiz Plan</p>
+                <p className="text-foreground font-semibold">{t('settings.freePlan')}</p>
                 <p className="text-sm text-muted-foreground">
-                  Temel özellikler
+                  {t('settings.basicFeatures')}
                 </p>
               </div>
               <motion.button
@@ -98,7 +119,7 @@ const SettingsPage = () => {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
-                Yükselt
+                {t('settings.upgrade')}
               </motion.button>
             </div>
           </section>
@@ -108,16 +129,16 @@ const SettingsPage = () => {
             <div className="flex items-center gap-2 mb-4 text-secondary">
               <Shield className="w-5 h-5" />
               <h2 className="font-serif font-semibold text-foreground">
-                Hesap
+                {t('settings.account')}
               </h2>
             </div>
             <div className="space-y-3">
               <button className="w-full text-left px-4 py-3 rounded-lg hover:bg-muted transition-colors text-sm text-foreground">
-                Şifre Değiştir
+                {t('settings.changePassword')}
               </button>
               <button className="w-full text-left px-4 py-3 rounded-lg hover:bg-muted transition-colors text-sm text-destructive flex items-center gap-2">
                 <LogOut className="w-4 h-4" />
-                Çıkış Yap
+                {t('settings.logout')}
               </button>
             </div>
           </section>

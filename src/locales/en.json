@@ -1,0 +1,86 @@
+{
+  "landing": {
+    "hero": {
+      "title": "Metsuke",
+      "subtitle": "Welcome to your digital dojo powered by AI",
+      "cta": "Start Journey",
+      "scroll": "Explore"
+    },
+    "features": {
+      "chat": {
+        "title": "AI Chat",
+        "subtitle": "Meditation Room",
+        "desc": "Your multimodal AI assistant powered by Llama 3.2 Vision. Text, image analysis, and generation all in one place."
+      },
+      "community": {
+        "title": "Community Platform",
+        "subtitle": "Scrolls of Wisdom",
+        "desc": "Share your articles, upload PDFs, and interact with the community. Knowledge grows as it is shared."
+      },
+      "image": {
+        "title": "Image Generation",
+        "subtitle": "Artist's Brush",
+        "desc": "Visualize your imagination with the '!draw' command. AI-powered image generation is just a command away."
+      }
+    },
+    "footer": {
+      "ready": "Are you ready?",
+      "desc": "Your journey with MetsukeAI starts here.",
+      "start": "Start"
+    }
+  },
+  "auth": {
+    "welcome": "Sign in or sign up",
+    "createAccount": "Create account",
+    "subtitle": "Get smarter responses, upload files and images, and do much more.",
+    "google": "Continue with Google",
+    "apple": "Continue with Apple",
+    "or": "Or",
+    "email": "Email address",
+    "password": "Password",
+    "login": "Sign In",
+    "signup": "Sign Up",
+    "loading": "Loading...",
+    "noAccount": "Don't have an account? Sign up",
+    "hasAccount": "Already have an account? Sign in",
+    "success": "Verification email sent. Please check your email.",
+    "errorGeneral": "An error occurred",
+    "configError": "Supabase connection not configured. Please check your .env file.",
+    "configErrorDesc": "VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are required for registration and login."
+  },
+  "chat": {
+    "search": "Search chats",
+    "explore": "Scrolls of Wisdom",
+    "settings": "Settings",
+    "conversations": "Conversations",
+    "welcome": "Hello {{name}}. Ready to dive in?",
+    "inputPlaceholder": "Ask anything",
+    "userRole": "Warrior"
+  },
+  "explore": {
+    "title": "Scrolls of Wisdom",
+    "subtitle": "Wisdom shares from the community",
+    "share": "Share Post",
+    "categories": {
+      "all": "All",
+      "philosophy": "Philosophy",
+      "technology": "Technology",
+      "art": "Art",
+      "history": "History"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "profile": "Profile",
+    "name": "Name",
+    "bio": "Bio",
+    "membership": "Membership",
+    "freePlan": "Free Plan",
+    "basicFeatures": "Basic features",
+    "upgrade": "Upgrade",
+    "account": "Account",
+    "changePassword": "Change Password",
+    "logout": "Log Out",
+    "language": "Language"
+  }
+}

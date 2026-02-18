@@ -1,0 +1,86 @@
+{
+  "landing": {
+    "hero": {
+      "title": "Metsuke",
+      "subtitle": "Yapay zekâ ile güçlendirilmiş dijital dojo'nuza hoş geldiniz",
+      "cta": "Yolculuğa Başla",
+      "scroll": "Keşfet"
+    },
+    "features": {
+      "chat": {
+        "title": "Yapay Zekâ Sohbet",
+        "subtitle": "Meditasyon Odası",
+        "desc": "Llama 3.2 Vision destekli çoklu modlu yapay zekâ asistanınız. Metin, görsel analizi ve görsel üretimi tek bir yerde."
+      },
+      "community": {
+        "title": "Topluluk Platformu",
+        "subtitle": "Bilgelik Tomarları",
+        "desc": "Makalelerinizi paylaşın, PDF yükleyin ve toplulukla etkileşime geçin. Bilgi paylaşıldıkça büyür."
+      },
+      "image": {
+        "title": "Görsel Üretimi",
+        "subtitle": "Sanatçının Fırçası",
+        "desc": "'!çiz' komutuyla hayal gücünüzü görselleştirin. AI destekli görsel üretim, bir komut uzağınızda."
+      }
+    },
+    "footer": {
+      "ready": "Hazır mısınız?",
+      "desc": "MetsukeAI ile yolculuğunuz burada başlıyor.",
+      "start": "Başla"
+    }
+  },
+  "auth": {
+    "welcome": "Oturum aç veya kaydol",
+    "createAccount": "Hesap oluştur",
+    "subtitle": "Daha zeki yanıtlar alabilir, dosya ve görsel yükleyebilir ve çok daha fazlasını yapabilirsin.",
+    "google": "Google ile devam et",
+    "apple": "Apple ile devam et",
+    "or": "Ya da",
+    "email": "E-posta adresi",
+    "password": "Şifre",
+    "login": "Giriş Yap",
+    "signup": "Kaydol",
+    "loading": "Yükleniyor...",
+    "noAccount": "Hesabın yok mu? Kaydol",
+    "hasAccount": "Zaten hesabın var mı? Giriş yap",
+    "success": "Doğrulama e-postası gönderildi. Lütfen e-postanızı kontrol edin.",
+    "errorGeneral": "Bir hata oluştu",
+    "configError": "Supabase bağlantısı yapılandırılmamış. Lütfen .env dosyasını kontrol edin.",
+    "configErrorDesc": "Kayıt ve giriş işlemleri için VITE_SUPABASE_URL ve VITE_SUPABASE_ANON_KEY gereklidir."
+  },
+  "chat": {
+    "search": "Sohbetleri ara",
+    "explore": "Bilgelik Tomarları",
+    "settings": "Ayarlar",
+    "conversations": "Sohbetler",
+    "welcome": "Merhaba {{name}}. Dalmaya hazır mısın?",
+    "inputPlaceholder": "Herhangi bir şey sor",
+    "userRole": "Savaşçı"
+  },
+  "explore": {
+    "title": "Bilgelik Tomarları",
+    "subtitle": "Topluluktan bilgelik paylaşımları",
+    "share": "Yazı Paylaş",
+    "categories": {
+      "all": "Tümü",
+      "philosophy": "Felsefe",
+      "technology": "Teknoloji",
+      "art": "Sanat",
+      "history": "Tarih"
+    }
+  },
+  "settings": {
+    "title": "Ayarlar",
+    "profile": "Profil",
+    "name": "İsim",
+    "bio": "Biyografi",
+    "membership": "Üyelik",
+    "freePlan": "Ücretsiz Plan",
+    "basicFeatures": "Temel özellikler",
+    "upgrade": "Yükselt",
+    "account": "Hesap",
+    "changePassword": "Şifre Değiştir",
+    "logout": "Çıkış Yap",
+    "language": "Dil"
+  }
+}

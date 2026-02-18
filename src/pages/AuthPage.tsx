@@ -1,25 +1,35 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { Mail, Lock } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
+import { Mail, Lock, AlertCircle } from "lucide-react";
+import { supabase, isSupabaseConfigured } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable/index";
 import { toast } from "sonner";
 import logo from "@/assets/logo.png";
 import bgAuth from "@/assets/bg-auth.jpeg";
+import { useTranslation } from "react-i18next";
 
 const AuthPage = () => {
-    // ... existing code ...
-    // (Wait, I need to restore the full component content correctly or use replace_file_content carefully)
-    // Actually, I can just restore the imports and the jsx usage.
-
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [configError, setConfigError] = useState(false);
+
+  useEffect(() => {
+    if (!isSupabaseConfigured) {
+      setConfigError(true);
+      toast.error(t('auth.configError'));
+    }
+  }, [t]);
 
   const handleGoogleSignIn = async () => {
+    if (!isSupabaseConfigured) {
+        toast.error(t('auth.configError'));
+        return;
+    }
     const { error } = await lovable.auth.signInWithOAuth("google", {
       redirect_uri: window.location.origin,
     });
@@ -27,6 +37,10 @@ const AuthPage = () => {
   };
 
   const handleAppleSignIn = async () => {
+    if (!isSupabaseConfigured) {
+        toast.error(t('auth.configError'));
+        return;
+    }
     const { error } = await lovable.auth.signInWithOAuth("apple", {
       redirect_uri: window.location.origin,
     });
@@ -35,6 +49,10 @@ const AuthPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isSupabaseConfigured) {
+        toast.error(t('auth.configError'));
+        return;
+    }
     setLoading(true);
     try {
       if (isLogin) {
@@ -48,10 +66,10 @@ const AuthPage = () => {
           options: { emailRedirectTo: window.location.origin },
         });
         if (error) throw error;
-        toast.success("Doğrulama e-postası gönderildi. Lütfen e-postanızı kontrol edin.");
+        toast.success(t('auth.success'));
       }
     } catch (err: any) {
-      toast.error(err.message || "Bir hata oluştu");
+      toast.error(err.message || t('auth.errorGeneral'));
     } finally {
       setLoading(false);
     }
@@ -91,16 +109,25 @@ const AuthPage = () => {
         />
 
         <h1 className="text-2xl md:text-3xl font-serif font-bold text-foreground mb-2">
-          {isLogin ? "Oturum aç veya kaydol" : "Hesap oluştur"}
+          {isLogin ? t('auth.welcome') : t('auth.createAccount')}
         </h1>
         <p className="text-muted-foreground text-sm text-center mb-8 max-w-xs">
-          Daha zeki yanıtlar alabilir, dosya ve görsel yükleyebilir ve çok daha
-          fazlasını yapabilirsin.
+          {t('auth.subtitle')}
         </p>
+
+        {configError && (
+          <div className="w-full mb-6 p-4 bg-destructive/10 border border-destructive/20 rounded-lg flex items-start gap-3 text-destructive">
+            <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
+            <div className="text-sm">
+              <p className="font-semibold">{t('auth.configError')}</p>
+              <p className="mt-1 opacity-90">{t('auth.configErrorDesc')}</p>
+            </div>
+          </div>
+        )}
 
         {/* Social Buttons */}
         <div className="w-full space-y-3 mb-6">
-          <button onClick={handleGoogleSignIn} className="w-full flex items-center gap-3 px-4 py-3 rounded-lg border border-border bg-card hover:bg-muted transition-colors text-foreground">
+          <button onClick={handleGoogleSignIn} disabled={configError} className="w-full flex items-center gap-3 px-4 py-3 rounded-lg border border-border bg-card hover:bg-muted transition-colors text-foreground disabled:opacity-50 disabled:cursor-not-allowed">
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path
                 d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"
@@ -119,14 +146,14 @@ const AuthPage = () => {
                 fill="#EA4335"
               />
             </svg>
-            <span className="text-sm font-medium">Google ile devam et</span>
+            <span className="text-sm font-medium">{t('auth.google')}</span>
           </button>
 
-          <button onClick={handleAppleSignIn} className="w-full flex items-center gap-3 px-4 py-3 rounded-lg border border-border bg-card hover:bg-muted transition-colors text-foreground">
+          <button onClick={handleAppleSignIn} disabled={configError} className="w-full flex items-center gap-3 px-4 py-3 rounded-lg border border-border bg-card hover:bg-muted transition-colors text-foreground disabled:opacity-50 disabled:cursor-not-allowed">
             <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
               <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
             </svg>
-            <span className="text-sm font-medium">Apple ile devam et</span>
+            <span className="text-sm font-medium">{t('auth.apple')}</span>
           </button>
         </div>
 
@@ -134,7 +161,7 @@ const AuthPage = () => {
         <div className="w-full flex items-center gap-4 mb-6">
           <div className="flex-1 h-px bg-border" />
           <span className="text-xs text-muted-foreground tracking-widest uppercase">
-            Ya da
+            {t('auth.or')}
           </span>
           <div className="flex-1 h-px bg-border" />
         </div>
@@ -145,11 +172,12 @@ const AuthPage = () => {
             <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <input
               type="email"
-              placeholder="E-posta adresi"
+              placeholder={t('auth.email')}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full pl-10 pr-4 py-3 rounded-lg border border-border bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring text-sm"
               required
+              disabled={configError}
             />
           </div>
 
@@ -157,22 +185,23 @@ const AuthPage = () => {
             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <input
               type="password"
-              placeholder="Şifre"
+              placeholder={t('auth.password')}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full pl-10 pr-4 py-3 rounded-lg border border-border bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring text-sm"
               required
+              disabled={configError}
             />
           </div>
 
           <motion.button
             type="submit"
-            disabled={loading}
+            disabled={loading || configError}
             className="w-full py-3 rounded-lg bg-foreground text-background font-semibold text-sm hover:opacity-90 transition-opacity disabled:opacity-50"
             whileHover={{ scale: 1.01 }}
             whileTap={{ scale: 0.99 }}
           >
-            {loading ? "Yükleniyor..." : isLogin ? "Giriş Yap" : "Kaydol"}
+            {loading ? t('auth.loading') : isLogin ? t('auth.login') : t('auth.signup')}
           </motion.button>
         </form>
 
@@ -181,8 +210,8 @@ const AuthPage = () => {
           className="mt-6 text-xs text-muted-foreground hover:text-secondary transition-colors"
         >
           {isLogin
-            ? "Hesabın yok mu? Kaydol"
-            : "Zaten hesabın var mı? Giriş yap"}
+            ? t('auth.noAccount')
+            : t('auth.hasAccount')}
         </button>
       </motion.div>
     </div>

@@ -1,0 +1,86 @@
+{
+  "landing": {
+    "hero": {
+      "title": "Metsuke",
+      "subtitle": "Bienvenido a tu dojo digital impulsado por IA",
+      "cta": "Iniciar Viaje",
+      "scroll": "Explorar"
+    },
+    "features": {
+      "chat": {
+        "title": "Chat de IA",
+        "subtitle": "Sala de Meditación",
+        "desc": "Tu asistente de IA multimodal impulsado por Llama 3.2 Vision. Texto, análisis de imágenes y generación, todo en un solo lugar."
+      },
+      "community": {
+        "title": "Plataforma Comunitaria",
+        "subtitle": "Pergaminos de Sabiduría",
+        "desc": "Comparte tus artículos, sube PDFs e interactúa con la comunidad. El conocimiento crece cuando se comparte."
+      },
+      "image": {
+        "title": "Generación de Imágenes",
+        "subtitle": "Pincel del Artista",
+        "desc": "Visualiza tu imaginación con el comando '!draw'. La generación de imágenes por IA está a solo un comando de distancia."
+      }
+    },
+    "footer": {
+      "ready": "¿Estás listo?",
+      "desc": "Tu viaje con MetsukeAI comienza aquí.",
+      "start": "Empezar"
+    }
+  },
+  "auth": {
+    "welcome": "Iniciar sesión o registrarse",
+    "createAccount": "Crear cuenta",
+    "subtitle": "Obtén respuestas más inteligentes, sube archivos e imágenes y mucho más.",
+    "google": "Continuar con Google",
+    "apple": "Continuar con Apple",
+    "or": "O",
+    "email": "Dirección de correo",
+    "password": "Contraseña",
+    "login": "Iniciar Sesión",
+    "signup": "Registrarse",
+    "loading": "Cargando...",
+    "noAccount": "¿No tienes cuenta? Regístrate",
+    "hasAccount": "¿Ya tienes cuenta? Inicia sesión",
+    "success": "Correo de verificación enviado. Por favor, revisa tu correo.",
+    "errorGeneral": "Ocurrió un error",
+    "configError": "Conexión a Supabase no configurada. Por favor revisa tu archivo .env.",
+    "configErrorDesc": "Se requieren VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY para el registro y el inicio de sesión."
+  },
+  "chat": {
+    "search": "Buscar chats",
+    "explore": "Pergaminos de Sabiduría",
+    "settings": "Ajustes",
+    "conversations": "Conversaciones",
+    "welcome": "Hola {{name}}. ¿Listo para sumergirte?",
+    "inputPlaceholder": "Pregunta cualquier cosa",
+    "userRole": "Guerrero"
+  },
+  "explore": {
+    "title": "Pergaminos de Sabiduría",
+    "subtitle": "Sabiduría compartida por la comunidad",
+    "share": "Compartir Publicación",
+    "categories": {
+      "all": "Todo",
+      "philosophy": "Filosofía",
+      "technology": "Tecnología",
+      "art": "Arte",
+      "history": "Historia"
+    }
+  },
+  "settings": {
+    "title": "Ajustes",
+    "profile": "Perfil",
+    "name": "Nombre",
+    "bio": "Biografía",
+    "membership": "Membresía",
+    "freePlan": "Plan Gratuito",
+    "basicFeatures": "Funciones básicas",
+    "upgrade": "Mejorar",
+    "account": "Cuenta",
+    "changePassword": "Cambiar Contraseña",
+    "logout": "Cerrar Sesión",
+    "language": "Idioma"
+  }
+}
