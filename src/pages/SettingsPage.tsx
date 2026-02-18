@@ -1,83 +1,130 @@
-import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, User, Bell, Shield, HelpCircle, LogOut } from 'lucide-react';
+import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft, User, Crown, Shield, LogOut } from "lucide-react";
+import logo from "@/assets/logo.png";
+import bgSettings from "@/assets/bg-settings.jpeg";
 
 const SettingsPage = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    const handleLogout = () => {
-        localStorage.removeItem('metsuke_auth');
-        navigate('/auth');
-    };
+  return (
+    <div className="min-h-screen relative">
+      {/* Background */}
+      <div className="fixed inset-0 z-0">
+        <img src={bgSettings} alt="" className="h-full w-full object-cover opacity-15" />
+        <div className="absolute inset-0 bg-background/90" />
+      </div>
 
-    return (
-        <div className="min-h-screen bg-dark text-white font-sans relative overflow-hidden">
-            {/* Background */}
-            <div className="absolute inset-0 z-0">
-                 <img src="/assets/bg-settings-final.jpg" alt="Settings Background" className="w-full h-full object-cover opacity-30" />
-                 <div className="absolute inset-0 bg-dark/80 mix-blend-multiply" />
+      {/* Header */}
+      <header className="relative z-10 flex items-center gap-3 p-4 border-b border-border/50">
+        <button
+          onClick={() => navigate("/chat")}
+          className="p-2 hover:bg-muted rounded-lg transition-colors"
+        >
+          <ArrowLeft className="w-5 h-5 text-muted-foreground" />
+        </button>
+        <img src={logo} alt="" className="w-8 h-8" />
+        <span className="font-serif font-semibold text-foreground">
+          Metsuke<span className="text-secondary">AI</span>
+        </span>
+      </header>
+
+      {/* Content */}
+      <main className="relative z-10 max-w-2xl mx-auto px-4 py-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="space-y-8"
+        >
+          <h1 className="text-3xl font-serif font-bold text-foreground">
+            Ayarlar
+          </h1>
+
+          {/* Profile Section */}
+          <section className="bg-card/80 backdrop-blur-sm border border-border rounded-xl p-6">
+            <div className="flex items-center gap-2 mb-4 text-secondary">
+              <User className="w-5 h-5" />
+              <h2 className="font-serif font-semibold text-foreground">Profil</h2>
             </div>
-
-            {/* Header */}
-            <header className="relative z-10 flex items-center px-8 py-6 border-b border-white/10 bg-black/20 backdrop-blur-sm">
-                <button onClick={() => navigate('/chat')} className="text-gray-400 hover:text-white transition-colors mr-4">
-                    <ArrowLeft className="w-6 h-6" />
-                </button>
-                <h1 className="text-xl font-bold text-white tracking-wide">Settings</h1>
-            </header>
-
-            {/* Content */}
-            <div className="relative z-10 max-w-2xl mx-auto px-6 py-12">
-                <div className="bg-black/40 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden">
-                    
-                    <div className="p-6 border-b border-white/5">
-                        <div className="flex items-center space-x-4">
-                            <div className="w-16 h-16 bg-gradient-to-br from-gold/20 to-bordo/20 rounded-full flex items-center justify-center border border-white/10">
-                                <User className="w-8 h-8 text-white/80" />
-                            </div>
-                            <div>
-                                <h3 className="text-lg font-bold text-white">Warrior Profile</h3>
-                                <p className="text-sm text-gray-400">Managing the digital dojo.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="divide-y divide-white/5">
-                        <button className="w-full flex items-center justify-between p-4 hover:bg-white/5 transition-colors group">
-                            <div className="flex items-center space-x-3 text-gray-300 group-hover:text-white">
-                                <Bell className="w-5 h-5" />
-                                <span>Notifications</span>
-                            </div>
-                            <span className="text-xs text-gray-500">On</span>
-                        </button>
-
-                        <button className="w-full flex items-center justify-between p-4 hover:bg-white/5 transition-colors group">
-                            <div className="flex items-center space-x-3 text-gray-300 group-hover:text-white">
-                                <Shield className="w-5 h-5" />
-                                <span>Privacy & Security</span>
-                            </div>
-                        </button>
-
-                        <button className="w-full flex items-center justify-between p-4 hover:bg-white/5 transition-colors group">
-                            <div className="flex items-center space-x-3 text-gray-300 group-hover:text-white">
-                                <HelpCircle className="w-5 h-5" />
-                                <span>Help & Support</span>
-                            </div>
-                        </button>
-
-                        <button 
-                            onClick={handleLogout}
-                            className="w-full flex items-center justify-between p-4 hover:bg-red-900/20 transition-colors group"
-                        >
-                            <div className="flex items-center space-x-3 text-red-400 group-hover:text-red-300">
-                                <LogOut className="w-5 h-5" />
-                                <span>Log Out</span>
-                            </div>
-                        </button>
-                    </div>
-                </div>
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xl font-bold font-serif">
+                K
+              </div>
+              <div>
+                <p className="text-foreground font-semibold">Kenshi</p>
+                <p className="text-sm text-muted-foreground">kenshi@metsuke.ai</p>
+              </div>
             </div>
-        </div>
-    );
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm text-muted-foreground mb-1">
+                  İsim
+                </label>
+                <input
+                  type="text"
+                  defaultValue="Kenshi"
+                  className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                />
+              </div>
+              <div>
+                <label className="block text-sm text-muted-foreground mb-1">
+                  Biyografi
+                </label>
+                <textarea
+                  defaultValue="Dijital dojo'nun savaşçısı"
+                  rows={3}
+                  className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground text-sm resize-none focus:outline-none focus:ring-2 focus:ring-ring"
+                />
+              </div>
+            </div>
+          </section>
+
+          {/* Membership */}
+          <section className="bg-card/80 backdrop-blur-sm border border-border rounded-xl p-6">
+            <div className="flex items-center gap-2 mb-4 text-secondary">
+              <Crown className="w-5 h-5" />
+              <h2 className="font-serif font-semibold text-foreground">Üyelik</h2>
+            </div>
+            <div className="flex items-center justify-between p-4 bg-muted rounded-lg">
+              <div>
+                <p className="text-foreground font-semibold">Ücretsiz Plan</p>
+                <p className="text-sm text-muted-foreground">
+                  Temel özellikler
+                </p>
+              </div>
+              <motion.button
+                className="px-4 py-2 bg-secondary text-secondary-foreground rounded-lg text-sm font-medium"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                Yükselt
+              </motion.button>
+            </div>
+          </section>
+
+          {/* Security */}
+          <section className="bg-card/80 backdrop-blur-sm border border-border rounded-xl p-6">
+            <div className="flex items-center gap-2 mb-4 text-secondary">
+              <Shield className="w-5 h-5" />
+              <h2 className="font-serif font-semibold text-foreground">
+                Hesap
+              </h2>
+            </div>
+            <div className="space-y-3">
+              <button className="w-full text-left px-4 py-3 rounded-lg hover:bg-muted transition-colors text-sm text-foreground">
+                Şifre Değiştir
+              </button>
+              <button className="w-full text-left px-4 py-3 rounded-lg hover:bg-muted transition-colors text-sm text-destructive flex items-center gap-2">
+                <LogOut className="w-4 h-4" />
+                Çıkış Yap
+              </button>
+            </div>
+          </section>
+        </motion.div>
+      </main>
+    </div>
+  );
 };
 
 export default SettingsPage;

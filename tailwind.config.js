@@ -12,6 +12,7 @@ export default {
         dark: '#0B0B0D',
         background: '#0B0B0D',
         foreground: '#FFFFFF',
+        'sidebar-background': '#121212',
         primary: {
           DEFAULT: '#6E000C',
           foreground: '#FFFFFF',

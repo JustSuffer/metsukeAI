@@ -5,7 +5,7 @@ export const lovable = {
     signInWithOAuth: async (provider: string, options?: any) => {
       console.log(`Mock: Signing in with ${provider}`, options);
       // Simulate success or error
-      return { error: null };
+      return { error: null as { message: string } | null };
     }
   }
 };
