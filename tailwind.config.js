@@ -8,9 +8,22 @@ export default {
     extend: {
       colors: {
         bordo: '#6E000C',
-        gold: '#D4AF37', // Kept for accents, but primary text will be white
+        gold: '#D4AF37',
         dark: '#0B0B0D',
-        // 'paper' removed or set to white for main text base
+        background: '#0B0B0D',
+        foreground: '#FFFFFF',
+        primary: {
+          DEFAULT: '#6E000C',
+          foreground: '#FFFFFF',
+        },
+        secondary: {
+          DEFAULT: '#D4AF37',
+          foreground: '#0B0B0D',
+        },
+        muted: {
+          DEFAULT: '#1a1a1a',
+          foreground: '#a3a3a3',
+        },
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'], // Cleaner, modern sans-serif

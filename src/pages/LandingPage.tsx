@@ -1,144 +1,202 @@
-import { useRef } from 'react';
-import { motion, useScroll, useTransform, useInView } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
-import { ChevronDown } from 'lucide-react';
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import logo from "../assets/logo.png";
+import bgLanding from "../assets/bg-landing.jpeg";
 
-const FadeInSection = ({ children }: { children: React.ReactNode }) => {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
-
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 50, filter: 'blur(10px)' }}
-      animate={isInView ? { opacity: 1, y: 0, filter: 'blur(0px)' } : {}}
-      transition={{ duration: 0.8, ease: "easeOut" }}
-      className="w-full max-w-6xl mx-auto px-6 py-24"
-    >
-      {children}
-    </motion.div>
-  );
-};
+const features = [
+  {
+    title: "Yapay Zekâ Sohbet",
+    subtitle: "Meditasyon Odası",
+    description:
+      "Llama 3.2 Vision destekli çoklu modlu yapay zekâ asistanınız. Metin, görsel analizi ve görsel üretimi tek bir yerde.",
+  },
+  {
+    title: "Topluluk Platformu",
+    subtitle: "Bilgelik Tomarları",
+    description:
+      "Makalelerinizi paylaşın, PDF yükleyin ve toplulukla etkileşime geçin. Bilgi paylaşıldıkça büyür.",
+  },
+  {
+    title: "Görsel Üretimi",
+    subtitle: "Sanatçının Fırçası",
+    description:
+      "'!çiz' komutuyla hayal gücünüzü görselleştirin. AI destekli görsel üretim, bir komut uzağınızda.",
+  },
+];
 
 const LandingPage = () => {
-    const navigate = useNavigate();
-    const targetRef = useRef(null);
-    const { scrollYProgress } = useScroll({
-        target: targetRef,
-        offset: ["start start", "end start"]
-    });
+  const navigate = useNavigate();
+  const containerRef = useRef<HTMLDivElement>(null);
 
-    const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-    const scale = useTransform(scrollYProgress, [0, 0.5], [1, 0.8]);
-    const y = useTransform(scrollYProgress, [0, 0.5], [0, -50]);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"],
+  });
 
-    return (
-        <div className="bg-dark text-white min-h-screen font-sans selection:bg-bordo selection:text-white">
-            {/* Hero Section */}
-            <section ref={targetRef} className="relative h-screen flex flex-col items-center justify-center overflow-hidden">
-                <div className="absolute inset-0 z-0">
-                    <img src="/assets/bg-landing-final.jpg" alt="Landing Background" className="w-full h-full object-cover opacity-60 mix-blend-overlay" />
-                    <div className="absolute inset-0 bg-gradient-to-b from-dark/50 via-dark/70 to-dark" />
-                </div>
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
+  const heroScale = useTransform(scrollYProgress, [0, 0.15], [1, 0.85]);
 
-                <motion.div 
-                    style={{ opacity, scale, y }}
-                    className="relative z-10 flex flex-col items-center text-center"
-                >
-                    <motion.div
-                        className="relative mb-8"
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-                    >
-                         <div className="absolute inset-0 bg-gold/20 blur-3xl rounded-full" />
-                         <img 
-                            src="/assets/logo.png" 
-                            alt="MetsukeAI Logo" 
-                            className="w-40 h-40 md:w-56 md:h-56 object-contain drop-shadow-[0_0_30px_rgba(212,175,55,0.4)] relative z-10"
-                        />
-                    </motion.div>
-
-                    <motion.h1 
-                        className="text-6xl md:text-9xl font-bold tracking-tighter text-white mb-6"
-                        initial={{ y: 100, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ delay: 0.2, duration: 1, ease: "easeOut" }}
-                    >
-                        METSUKE AI
-                    </motion.h1>
-
-                    <motion.p 
-                        className="text-xl md:text-2xl text-gray-300 font-light tracking-widest uppercase max-w-lg"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.8, duration: 1 }}
-                    >
-                        The Eye of Intelligence
-                    </motion.p>
-                </motion.div>
-
-                <motion.div 
-                    className="absolute bottom-10 z-10"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 1.5, duration: 1 }}
-                >
-                    <ChevronDown className="w-8 h-8 text-white/50 animate-bounce" />
-                </motion.div>
-            </section>
-
-            {/* Content Sections */}
-            <section className="relative z-10 bg-dark">
-                <FadeInSection>
-                    <div className="flex flex-col md:flex-row items-center gap-12">
-                        <div className="flex-1">
-                            <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">Precision & <span className="text-bordo">Power</span>.</h2>
-                            <p className="text-xl text-gray-300 leading-relaxed">
-                                Provide unwavering attention to detail with our AI-powered vision. 
-                                MetsukeAI combines ancient wisdom with cutting-edge technology to analyze, interpret, and assist specifically for your needs.
-                            </p>
-                        </div>
-                        <div className="flex-1 h-64 md:h-96 bg-gray-900 rounded-2xl overflow-hidden border border-white/5 relative group">
-                            <div className="absolute inset-0 bg-gradient-to-br from-bordo/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                             {/* Placeholder for feature image */}
-                            <div className="absolute inset-0 flex items-center justify-center text-white/10 font-serif text-9xl">侍</div>
-                        </div>
-                    </div>
-                </FadeInSection>
-
-                <FadeInSection>
-                    <div className="flex flex-col md:flex-row-reverse items-center gap-12">
-                        <div className="flex-1">
-                            <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">Seamless <span className="text-gold">Structure</span>.</h2>
-                            <p className="text-xl text-gray-300 leading-relaxed">
-                                Experience a flow state like no other. Our interface is designed to disappear, leaving only you and your objective. 
-                                Minimalist, efficient, and aesthetically superior.
-                            </p>
-                        </div>
-                        <div className="flex-1 h-64 md:h-96 bg-gray-900 rounded-2xl overflow-hidden border border-white/5 relative group">
-                             <div className="absolute inset-0 bg-gradient-to-bl from-gold/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                            {/* Placeholder for feature image */}
-                            <div className="absolute inset-0 flex items-center justify-center text-bordo/20 font-serif text-9xl">禅</div>
-                        </div>
-                    </div>
-                </FadeInSection>
-
-                <FadeInSection>
-                     <div className="text-center py-20">
-                        <h2 className="text-5xl md:text-7xl font-bold text-white mb-8">Ready to Ascend?</h2>
-                        <button
-                            onClick={() => navigate('/auth')}
-                            className="group relative inline-flex items-center justify-center px-12 py-4 overflow-hidden font-bold text-white transition-all duration-300 bg-transparent border-2 border-white rounded-full hover:bg-white/10 focus:outline-none"
-                        >
-                            <span className="absolute inset-0 w-full h-full -mt-1 rounded-lg opacity-30 bg-gradient-to-b from-transparent via-transparent to-black"></span>
-                            <span className="relative text-xl tracking-widest uppercase">Begin Journey</span>
-                        </button>
-                     </div>
-                </FadeInSection>
-            </section>
+  return (
+    <div ref={containerRef} className="relative bg-background">
+      {/* ===== HERO SECTION ===== */}
+      <motion.section
+        style={{ opacity: heroOpacity, scale: heroScale }}
+        className="fixed inset-0 z-10 flex flex-col items-center justify-center overflow-hidden"
+      >
+        {/* Background image */}
+        <div className="absolute inset-0">
+          <img
+            src={bgLanding}
+            alt=""
+            className="h-full w-full object-cover opacity-30"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/80 to-background" />
         </div>
-    );
+
+        {/* Logo + Title — no pointer events on decorations */}
+        <div className="relative z-20 flex flex-col items-center gap-6">
+          <motion.img
+            src={logo}
+            alt="MetsukeAI Logo"
+            className="w-32 h-32 md:w-44 md:h-44 drop-shadow-2xl"
+            initial={{ scale: 0.3, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+          />
+          <motion.h1
+            className="text-5xl md:text-7xl font-serif font-bold tracking-wider text-foreground"
+            initial={{ opacity: 0, y: 30, letterSpacing: "0.5em" }}
+            animate={{ opacity: 1, y: 0, letterSpacing: "0.15em" }}
+            transition={{ duration: 1.4, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+          >
+            Metsuke<span className="text-secondary">AI</span>
+          </motion.h1>
+
+          <motion.p
+            className="text-lg md:text-xl text-muted-foreground max-w-md text-center font-light"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.9 }}
+          >
+            Yapay zekâ ile güçlendirilmiş dijital dojo'nuza hoş geldiniz
+          </motion.p>
+
+          <motion.button
+            onClick={() => navigate("/auth")}
+            className="mt-8 px-10 py-4 bg-primary text-primary-foreground font-serif text-lg tracking-widest rounded-sm border-2 border-secondary/50 hover:border-secondary hover:bg-primary/90 transition-all duration-500 relative overflow-hidden group"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 1.3 }}
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <span className="relative z-10">Yolculuğa Başla</span>
+            <div className="absolute inset-0 bg-secondary/10 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-700" />
+          </motion.button>
+        </div>
+
+        {/* Scroll indicator */}
+        <motion.div
+          className="absolute bottom-10 flex flex-col items-center gap-2"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 2 }}
+        >
+          <span className="text-xs text-muted-foreground tracking-[0.3em] uppercase font-light">
+            Keşfet
+          </span>
+          <motion.div
+            className="w-px h-8 bg-secondary/50"
+            animate={{ scaleY: [1, 0.5, 1] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          />
+        </motion.div>
+      </motion.section>
+
+      {/* Spacer for hero */}
+      <div className="h-screen" />
+
+      {/* ===== FEATURE SECTIONS ===== */}
+      {features.map((feature, i) => (
+        <section
+          key={i}
+          className="relative z-20 min-h-screen flex items-center justify-center px-6 bg-background"
+        >
+          <motion.div
+            className="max-w-3xl mx-auto text-center"
+            initial={{ opacity: 0, y: 100 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.4 }}
+            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <motion.span
+              className="text-sm tracking-[0.4em] uppercase text-secondary font-light"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+            >
+              {feature.subtitle}
+            </motion.span>
+
+            <motion.h2
+              className="mt-4 text-4xl md:text-6xl font-serif font-bold text-foreground leading-tight"
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{
+                delay: 0.3,
+                duration: 0.8,
+                ease: [0.16, 1, 0.3, 1],
+              }}
+            >
+              {feature.title}
+            </motion.h2>
+
+            <div className="mx-auto mt-6 w-24 h-px bg-gradient-to-r from-transparent via-secondary to-transparent" />
+
+            <motion.p
+              className="mt-8 text-lg md:text-xl text-muted-foreground leading-relaxed font-light"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.5, duration: 0.8 }}
+            >
+              {feature.description}
+            </motion.p>
+          </motion.div>
+        </section>
+      ))}
+
+      {/* ===== FOOTER CTA ===== */}
+      <section className="relative z-20 min-h-[60vh] flex items-center justify-center px-6 pb-20 bg-background">
+        <motion.div
+          className="text-center"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1 }}
+        >
+          <h2 className="text-3xl md:text-5xl font-serif font-bold text-foreground">
+            Hazır mısınız?
+          </h2>
+          <div className="mx-auto mt-4 w-16 h-px bg-secondary/60" />
+          <p className="mt-6 text-muted-foreground text-lg font-light">
+            MetsukeAI ile yolculuğunuz burada başlıyor.
+          </p>
+          <motion.button
+            onClick={() => navigate("/auth")}
+            className="mt-10 px-12 py-4 bg-primary text-primary-foreground font-serif text-lg tracking-widest rounded-sm border-2 border-secondary/50 hover:border-secondary transition-all duration-500"
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            Başla
+          </motion.button>
+        </motion.div>
+      </section>
+    </div>
+  );
 };
 
 export default LandingPage;
