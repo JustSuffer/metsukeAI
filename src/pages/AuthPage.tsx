@@ -2,13 +2,17 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Mail, Lock } from "lucide-react";
-import { supabase } from "../integrations/supabase/client";
-import { lovable } from "../integrations/lovable";
+import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable";
 import { toast } from "sonner";
 import logo from "@/assets/logo.png";
 import bgAuth from "@/assets/bg-auth.jpeg";
 
 const AuthPage = () => {
+    // ... existing code ...
+    // (Wait, I need to restore the full component content correctly or use replace_file_content carefully)
+    // Actually, I can just restore the imports and the jsx usage.
+
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
