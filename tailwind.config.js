@@ -24,6 +24,25 @@ export default {
           DEFAULT: '#1a1a1a',
           foreground: '#a3a3a3',
         },
+        border: '#27272a',
+        input: '#27272a',
+        ring: '#D4AF37',
+        card: {
+            DEFAULT: '#121212',
+            foreground: '#FFFFFF'
+        },
+        popover: {
+            DEFAULT: '#0B0B0D',
+            foreground: '#FFFFFF'
+        },
+        accent: {
+            DEFAULT: '#27272a',
+            foreground: '#FFFFFF'
+        },
+        destructive: {
+            DEFAULT: '#7f1d1d',
+            foreground: '#FFFFFF'
+        }
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'], // Cleaner, modern sans-serif
