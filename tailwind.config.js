@@ -8,17 +8,17 @@ export default {
     extend: {
       colors: {
         bordo: '#6E000C',
-        gold: '#D4AF37',
+        gold: '#C0C0C0', // Changed to silver to avoid yellow
         dark: '#0B0B0D',
         background: '#0B0B0D',
         foreground: '#FFFFFF',
         'sidebar-background': '#121212',
         primary: {
-          DEFAULT: '#6E000C',
+          DEFAULT: '#6E000C', // Bordo
           foreground: '#FFFFFF',
         },
         secondary: {
-          DEFAULT: '#D4AF37',
+          DEFAULT: '#a3a3a3', // Neutral Grey instead of Gold
           foreground: '#0B0B0D',
         },
         muted: {

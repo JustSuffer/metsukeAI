@@ -41,6 +41,37 @@ const ExplorePage = () => {
   // GNews API Key from user
   const GNEWS_API_KEY = "6dfcaba24ec8d54cb23cd9f9f93977ae";
 
+  // Fallback news in case API fails or limit is reached
+  const mockNews: NewsItem[] = [
+    {
+      title: "İlginç detaylara sahip Infinix Note 60 Pro resmi olarak tanıtıldı",
+      description: "İlginç detaylara sahip akıllı telefon modeli Infinix Note 60 Pro, bugün resmi olarak tanıtıldı. Cihaz Türkiye'de de satılabilir.",
+      content: "...",
+      url: "https://www.log.com.tr/ilginc-detaylara-sahip-infinix-note-60-pro-resmi-olarak-tanitildi/",
+      image: "https://www.log.com.tr/wp-content/uploads/2026/02/2026-02-18_15-34-48_aK97v.jpg",
+      publishedAt: "2026-02-18T22:31:10Z",
+      source: { name: "Teknoloji haberleri - LOG", url: "https://www.log.com.tr" }
+    },
+    {
+      title: "Baltık'ta Bayraktar TB3 şov! Ayakta alkışladı: NATO komutanı olarak minnettarım",
+      description: "NATO'nun Almanya'nın kuzeyindeki Baltık Denizi'nde düzenlediği Steadfast Dart 2026 tatbikatında görev alan Bayraktar TB3...",
+      content: "...",
+      url: "https://www.milliyet.com.tr/gundem/baltikta-bayraktar-tb3-sov-ayakta-alkisladi-nato-komutani-olarak-minnettarim-7540769",
+      image: "https://image.milimaj.com/i/milliyet/75/0x0/699626ed0d5f87cad270a60c.jpg",
+      publishedAt: "2026-02-18T20:54:00Z",
+      source: { name: "Milliyet", url: "https://www.milliyet.com.tr" }
+    },
+    {
+      title: "Google, iPhone tanıtımından önce Pixel 10a'yı piyasaya sürdü",
+      description: "Google, Pixel 10a'yı sınırlı donanım yenilikleri ve yapay zeka odaklı yazılım özellikleriyle, Apple'ın iPhone 17e tanıtımı öncesinde...",
+      content: "...",
+      url: "https://www.bloomberght.com/google-iphone-tanitimindan-once-pixel-10a-yi-piyasaya-surdu-3769511",
+      image: "https://geoim.bloomberght.com/l/2026/02/18/ver1771434248/3769511/jpg/960x540",
+      publishedAt: "2026-02-18T17:05:14Z",
+      source: { name: "Bloomberght", url: "https://www.bloomberght.com" }
+    }
+  ];
+
   useEffect(() => {
     if (activeTab === "news") {
       fetchNews();
@@ -48,24 +79,31 @@ const ExplorePage = () => {
   }, [activeTab]);
 
   const fetchNews = async () => {
-    if (news.length > 0) return; // Prevent refetching if already loaded
+    if (news.length > 0) return; 
     
     setIsLoadingNews(true);
     try {
       const response = await fetch(
         `https://gnews.io/api/v4/top-headlines?category=technology&lang=tr&country=tr&max=10&apikey=${GNEWS_API_KEY}`
       );
+      
+      if (!response.ok) {
+         throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
       const data = await response.json();
       
-      if (data.articles) {
+      if (data.articles && data.articles.length > 0) {
         setNews(data.articles);
       } else {
-        console.error("GNews API Error:", data);
-        toast.error("Haberler yüklenirken bir hata oluştu.");
+        console.warn("GNews API returned no articles, using fallback.");
+        setNews(mockNews);
+        toast.error("Haberler API'den çekilemedi, önbellekteki haberler gösteriliyor.");
       }
     } catch (error) {
       console.error("Fetch Error:", error);
-      toast.error("İnternet bağlantınızı kontrol edin.");
+      setNews(mockNews);
+      toast.error("Haberler yüklenemedi, kayıtlı haberler gösteriliyor.");
     } finally {
       setIsLoadingNews(false);
     }
@@ -118,8 +156,8 @@ const ExplorePage = () => {
     <div className="min-h-screen relative bg-background text-foreground overflow-x-hidden">
       {/* Background - Dark Burgundy/Black Theme */}
       <div className="fixed inset-0 z-0 bg-[#1a0505]">
-        <img src={bgExplore} alt="" className="h-full w-full object-cover opacity-10 mix-blend-overlay" />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/90 via-background/95 to-background" />
+        <img src={bgExplore} alt="" className="h-full w-full object-cover opacity-40 mix-blend-overlay" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-transparent to-background/90" />
       </div>
 
       {/* Header */}
