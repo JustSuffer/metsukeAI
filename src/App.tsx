@@ -5,6 +5,7 @@ import AuthPage from './pages/AuthPage';
 import ChatPage from './pages/ChatPage';
 import ExplorePage from './pages/ExplorePage';
 import SettingsPage from './pages/SettingsPage';
+import PlanPage from './pages/PlanPage';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/chat" element={<ChatPage />} />
         <Route path="/explore" element={<ExplorePage />} />
         <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/plan" element={<PlanPage />} />
       </Routes>
     </Router>
   );

@@ -1,17 +1,154 @@
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, User, Crown, Shield, LogOut, Globe } from "lucide-react";
 import logo from "@/assets/logo.png";
 import bgSettings from "@/assets/bg-settings.jpeg";
 import { useTranslation } from "react-i18next";
+import { supabase } from "@/integrations/supabase/client";
 
 const SettingsPage = () => {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
+  const [loading, setLoading] = useState(true);
+  const [uploading, setUploading] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const [profile, setProfile] = useState<any>({
+    full_name: "",
+    bio: "",
+    avatar_url: null,
+    subscription_tier: "free"
+  });
+
+  useEffect(() => {
+    getProfile();
+  }, []);
+
+  const getProfile = async () => {
+    try {
+      setLoading(true);
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user) {
+        navigate("/auth");
+        return;
+      }
+
+      setUser(user);
+
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (error && error.code !== 'PGRST116') {
+        throw error;
+      }
+
+      if (data) {
+        setProfile({
+            full_name: data.full_name || "",
+            bio: data.bio || "",
+            avatar_url: data.avatar_url,
+            subscription_tier: data.subscription_tier || "free"
+        });
+      }
+    } catch (error: any) {
+      console.error("Error fetching profile:", error);
+      // toast.error("Profil bilgileri yüklenemedi."); // Toast removed as per prefs, or re-add if needed? User asked to remove *news* toasts. I'll keep generic errors minimal or log them.
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateProfile = async () => {
+    try {
+      setLoading(true);
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user) throw new Error("No user");
+
+      const updates = {
+        id: user.id,
+        full_name: profile.full_name,
+        bio: profile.bio,
+        updated_at: new Date(),
+      };
+
+      const { error } = await supabase.from('profiles').upsert(updates);
+
+      if (error) throw error;
+      // toast.success("Profil güncellendi!"); 
+      alert("Profil başarıyla güncellendi!"); // Simple feedback
+    } catch (error: any) {
+        console.error("Error updating profile:", error);
+        alert("Hata: " + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const uploadAvatar = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      setUploading(true);
+
+      if (!event.target.files || event.target.files.length === 0) {
+        throw new Error('You must select an image to upload.');
+      }
+
+      const file = event.target.files[0];
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random()}.${fileExt}`;
+      const filePath = `${fileName}`;
+
+      const { error: uploadError } = await supabase.storage.from('avatars').upload(filePath, file);
+
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      const { data } = supabase.storage.from('avatars').getPublicUrl(filePath);
+      
+      setProfile((prev: any) => ({ ...prev, avatar_url: data.publicUrl }));
+      
+      // Auto save after upload
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+          await supabase.from('profiles').upsert({
+              id: user.id,
+              avatar_url: data.publicUrl
+          });
+      }
+
+    } catch (error: any) {
+      alert(error.message);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleSignOut = async () => {
+      await supabase.auth.signOut();
+      navigate("/");
+  };
+
+  const handlePasswordReset = async () => {
+      if (!user?.email) return;
+      const { error } = await supabase.auth.resetPasswordForEmail(user.email, {
+          redirectTo: window.location.origin + '/settings',
+      });
+      if (error) alert("Hata: " + error.message);
+      else alert("Şifre sıfırlama bağlantısı e-posta adresinize gönderildi.");
+  };
 
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng);
   };
+
+  if (loading && !profile.full_name) {
+      return <div className="min-h-screen flex items-center justify-center bg-background text-white">Yükleniyor...</div>;
+  }
 
   return (
     <div className="min-h-screen relative">
@@ -69,12 +206,30 @@ const SettingsPage = () => {
               <h2 className="font-serif font-semibold text-foreground">{t('settings.profile')}</h2>
             </div>
             <div className="flex items-center gap-4 mb-6">
-              <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xl font-bold font-serif">
-                K
+              <div className="relative">
+                  <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xl font-bold font-serif overflow-hidden">
+                    {profile.avatar_url ? (
+                        <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
+                    ) : (
+                        profile.full_name ? profile.full_name.charAt(0).toUpperCase() : (user?.email?.charAt(0).toUpperCase())
+                    )}
+                  </div>
+                  <label htmlFor="avatar-upload" className="absolute bottom-0 right-0 bg-secondary text-black rounded-full p-1 cursor-pointer hover:bg-white transition-colors">
+                      <User className="w-3 h-3" />
+                  </label>
+                  <input
+                    type="file"
+                    id="avatar-upload"
+                    className="hidden"
+                    accept="image/*"
+                    onChange={uploadAvatar}
+                    disabled={uploading}
+                  />
               </div>
+              
               <div>
-                <p className="text-foreground font-semibold">Kenshi</p>
-                <p className="text-sm text-muted-foreground">kenshi@metsuke.ai</p>
+                <p className="text-foreground font-semibold">{profile.full_name || "İsimsiz Kullanıcı"}</p>
+                <p className="text-sm text-muted-foreground">{user?.email}</p>
               </div>
             </div>
             <div className="space-y-4">
@@ -84,8 +239,10 @@ const SettingsPage = () => {
                 </label>
                 <input
                   type="text"
-                  defaultValue="Kenshi"
+                  value={profile.full_name}
+                  onChange={(e) => setProfile({ ...profile, full_name: e.target.value })}
                   className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                  placeholder="Adınız Soyadınız"
                 />
               </div>
               <div>
@@ -93,10 +250,20 @@ const SettingsPage = () => {
                   {t('settings.bio')}
                 </label>
                 <textarea
-                  defaultValue="Dijital dojo'nun savaşçısı"
+                  value={profile.bio}
+                  onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
                   rows={3}
                   className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground text-sm resize-none focus:outline-none focus:ring-2 focus:ring-ring"
+                  placeholder="Kendinizden bahsedin..."
                 />
+              </div>
+              <div className="flex justify-end">
+                  <button 
+                    onClick={updateProfile}
+                    className="px-4 py-2 bg-primary text-white rounded-lg text-sm hover:bg-primary/90 transition-colors"
+                  >
+                      Kaydet
+                  </button>
               </div>
             </div>
           </section>
@@ -109,12 +276,13 @@ const SettingsPage = () => {
             </div>
             <div className="flex items-center justify-between p-4 bg-muted rounded-lg">
               <div>
-                <p className="text-foreground font-semibold">{t('settings.freePlan')}</p>
+                <p className="text-foreground font-semibold capitalize">{profile.subscription_tier} Plan</p>
                 <p className="text-sm text-muted-foreground">
                   {t('settings.basicFeatures')}
                 </p>
               </div>
               <motion.button
+                onClick={() => navigate('/plan')}
                 className="px-4 py-2 bg-secondary text-secondary-foreground rounded-lg text-sm font-medium"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -133,10 +301,16 @@ const SettingsPage = () => {
               </h2>
             </div>
             <div className="space-y-3">
-              <button className="w-full text-left px-4 py-3 rounded-lg hover:bg-muted transition-colors text-sm text-foreground">
+              <button 
+                onClick={handlePasswordReset}
+                className="w-full text-left px-4 py-3 rounded-lg hover:bg-muted transition-colors text-sm text-foreground"
+              >
                 {t('settings.changePassword')}
               </button>
-              <button className="w-full text-left px-4 py-3 rounded-lg hover:bg-muted transition-colors text-sm text-destructive flex items-center gap-2">
+              <button 
+                onClick={handleSignOut}
+                className="w-full text-left px-4 py-3 rounded-lg hover:bg-muted transition-colors text-sm text-destructive flex items-center gap-2"
+              >
                 <LogOut className="w-4 h-4" />
                 {t('settings.logout')}
               </button>
