@@ -1,20 +1,26 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Heart, MessageCircle, Plus, FileText, Globe, ExternalLink } from "lucide-react";
+import { ArrowLeft, Plus, FileText, Globe, ExternalLink, Download } from "lucide-react";
 import logo from "@/assets/logo.png";
 import bgExplore from "@/assets/bg-explore.jpeg";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import ArticleSubmissionModal from "@/components/ArticleSubmissionModal";
 
 interface Article {
   id: string;
   title: string;
-  excerpt: string;
-  author: string;
-  likes: number;
-  comments: number;
+  excerpt: string; // mapped from abstract
+  author: string; // mapped from author_id (needs profile fetch or join, for now using 'Anonymous' or email if available in metadata)
+  likes: number; // view_count for now
+  comments: number; 
   category: string;
+  pdf_url?: string;
+  cover_image_url?: string;
+  created_at: string;
+  abstract?: string;
 }
 
 interface NewsItem {
@@ -36,7 +42,9 @@ const ExplorePage = () => {
   const [activeTab, setActiveTab] = useState<"news" | "community">("news");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [news, setNews] = useState<NewsItem[]>([]);
+  const [communityArticles, setCommunityArticles] = useState<Article[]>([]);
   const [isLoadingNews, setIsLoadingNews] = useState(false);
+  const [isSubmissionOpen, setIsSubmissionOpen] = useState(false);
 
   // GNews API Key from user
   const GNEWS_API_KEY = "6dfcaba24ec8d54cb23cd9f9f93977ae";
@@ -75,14 +83,47 @@ const ExplorePage = () => {
   useEffect(() => {
     if (activeTab === "news") {
       checkAndFetchNews();
+    } else {
+        fetchCommunityArticles();
     }
   }, [activeTab]);
+
+  const fetchCommunityArticles = async () => {
+      try {
+          const { data, error } = await supabase
+            .from('community_articles')
+            .select('*')
+            .eq('status', 'published') // Only published
+            .order('created_at', { ascending: false });
+
+          if (error) throw error;
+          
+          if (data) {
+             const formatted: Article[] = data.map(item => ({
+                 id: item.id,
+                 title: item.title,
+                 excerpt: item.abstract || item.content.substring(0, 100) + "...",
+                 author: "Anonim Üye", // Ideally fetch user profile
+                 likes: item.view_count || 0,
+                 comments: 0,
+                 category: item.category || "Genel",
+                 pdf_url: item.pdf_url,
+                 cover_image_url: item.cover_image_url,
+                 created_at: item.created_at,
+                 abstract: item.abstract
+             }));
+             setCommunityArticles(formatted);
+          }
+      } catch (error: any) {
+          console.error("Error fetching articles:", error);
+          toast.error("Makaleler yüklenirken hata oluştu.");
+      }
+  }
 
   const checkAndFetchNews = async () => {
     const cachedDate = localStorage.getItem("metsuke_news_date");
     const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
     
-    // Check if we have valid cache for TODAY
     if (cachedDate === today) {
         const cachedNews = localStorage.getItem("metsuke_news_cache");
         if (cachedNews) {
@@ -90,7 +131,7 @@ const ExplorePage = () => {
                 const parsed = JSON.parse(cachedNews);
                 if (parsed.length > 0) {
                     setNews(parsed);
-                    return; // Use cache, don't fetch
+                    return; 
                 }
             } catch (e) {
                 console.error("Cache parse error", e);
@@ -99,7 +140,6 @@ const ExplorePage = () => {
         }
     }
 
-    // If no cache or date changed, fetch new
     fetchNews(today);
   };
 
@@ -108,7 +148,6 @@ const ExplorePage = () => {
     
     setIsLoadingNews(true);
     try {
-      // Requests 20 articles
       const response = await fetch(
         `https://gnews.io/api/v4/top-headlines?category=technology&lang=tr&country=tr&max=20&apikey=${GNEWS_API_KEY}`
       );
@@ -121,7 +160,6 @@ const ExplorePage = () => {
       
       if (data.articles && data.articles.length > 0) {
         setNews(data.articles);
-        // Save to cache
         localStorage.setItem("metsuke_news_cache", JSON.stringify(data.articles));
         localStorage.setItem("metsuke_news_date", dateKey);
       } else {
@@ -146,40 +184,10 @@ const ExplorePage = () => {
     { id: "history", label: t('explore.categories.history') },
   ];
 
-  const mockArticles: Article[] = [
-    {
-      id: "1",
-      title: "Bushido: Savaşçının Yedi Erdemi",
-      excerpt: "Samuray ahlak kurallarının modern yaşamdaki yansımaları ve uygulanabilirliği üzerine...",
-      author: "Kenshi",
-      likes: 24,
-      comments: 5,
-      category: "philosophy",
-    },
-    {
-      id: "2",
-      title: "Zen ve Yapay Zekâ",
-      excerpt: "Meditasyon pratikleri ile makine öğrenmesi arasındaki şaşırtıcı paralellikler...",
-      author: "Ronin",
-      likes: 18,
-      comments: 3,
-      category: "technology",
-    },
-    {
-      id: "3",
-      title: "Katana Yapımının Sanatı",
-      excerpt: "Geleneksel Japon kılıç yapımının incelikleri ve ustanın sabır dersleri...",
-      author: "Takeshi",
-      likes: 31,
-      comments: 8,
-      category: "art",
-    },
-  ];
-
   const filteredCommunity =
     selectedCategory === "all"
-      ? mockArticles
-      : mockArticles.filter((a) => a.category === selectedCategory);
+      ? communityArticles
+      : communityArticles.filter((a) => a.category.toLowerCase() === selectedCategory || (selectedCategory === "all"));
 
   return (
     <div className="min-h-screen relative bg-background text-foreground overflow-x-hidden">
@@ -222,6 +230,7 @@ const ExplorePage = () => {
         </div>
 
         <motion.button
+          onClick={() => setIsSubmissionOpen(true)}
           className="flex items-center gap-2 px-4 py-2 bg-secondary/90 hover:bg-secondary text-white rounded-lg text-sm font-medium border border-secondary/50 shadow-lg shadow-secondary/10"
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
@@ -230,6 +239,16 @@ const ExplorePage = () => {
           <span className="hidden md:inline">{t('explore.share')}</span>
         </motion.button>
       </header>
+
+      {/* Article Submission Modal */}
+      <ArticleSubmissionModal 
+        isOpen={isSubmissionOpen} 
+        onClose={() => setIsSubmissionOpen(false)} 
+        onSuccess={() => {
+            fetchCommunityArticles();
+            setActiveTab("community");
+        }} 
+      />
 
       {/* Content */}
       <main className="relative z-10 max-w-6xl mx-auto px-4 py-8">
@@ -333,46 +352,65 @@ const ExplorePage = () => {
                             ))}
                         </div>
                     </div>
-
-                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                        {filteredCommunity.map((article, i) => (
-                        <motion.div
-                            key={article.id}
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ delay: i * 0.1, duration: 0.4 }}
-                            className="bg-card/30 backdrop-blur-md border border-white/5 rounded-xl p-5 hover:bg-card/50 transition-all cursor-pointer group border-l-2 border-l-transparent hover:border-l-secondary"
-                        >
-                            <div className="flex items-center gap-2 mb-3">
-                                <div className="p-1.5 rounded-full bg-secondary/10">
-                                    <FileText className="w-3 h-3 text-secondary" />
+                    
+                    {filteredCommunity.length === 0 ? (
+                         <div className="text-center py-20 bg-card/20 rounded-xl border border-white/5">
+                             <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                             <h3 className="text-lg font-medium text-white mb-2">Henüz makale yok</h3>
+                             <p className="text-muted-foreground mb-6">İlk makaleyi sen paylaşmak ister misin?</p>
+                             <button
+                                onClick={() => setIsSubmissionOpen(true)}
+                                className="px-6 py-2 bg-secondary text-white rounded-lg hover:bg-secondary/90 transition-colors"
+                             >
+                                Makale Yaz
+                             </button>
+                         </div>
+                    ) : (
+                        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                            {filteredCommunity.map((article, i) => (
+                            <motion.div
+                                key={article.id}
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ delay: i * 0.1, duration: 0.4 }}
+                                className="bg-card/40 backdrop-blur-md border border-white/5 rounded-xl overflow-hidden hover:bg-card/60 transition-all cursor-pointer group border-l-2 border-l-transparent hover:border-l-secondary flex flex-col"
+                            >
+                                {article.cover_image_url && (
+                                    <div className="h-40 overflow-hidden relative">
+                                        <img src={article.cover_image_url} alt={article.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                                        <div className="absolute inset-0 bg-black/40" />
+                                     </div>
+                                )}
+                                <div className="p-5 flex flex-col flex-grow">
+                                    <div className="flex items-center gap-2 mb-3">
+                                        <span className="text-xs font-bold text-secondary bg-secondary/10 px-2 py-0.5 rounded uppercase tracking-wider">
+                                            {article.category}
+                                        </span>
+                                    </div>
+                                    <h3 className="text-lg font-serif font-bold text-white mb-2 group-hover:text-secondary transition-colors">
+                                        {article.title}
+                                    </h3>
+                                    <p className="text-sm text-muted-foreground mb-4 line-clamp-3 font-light flex-grow">
+                                        {article.excerpt}
+                                    </p>
+                                    
+                                    {/* Footer Actions */}
+                                    <div className="flex items-center justify-between text-xs text-muted-foreground border-t border-white/5 pt-3 mt-auto">
+                                        <span className="text-white/60">@{article.author}</span>
+                                        <div className="flex items-center gap-3">
+                                            {article.pdf_url && (
+                                                <a href={article.pdf_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 hover:text-white transition-colors" title="PDF İndir">
+                                                    <Download className="w-3 h-3" />
+                                                    PDF
+                                                </a>
+                                            )}
+                                        </div>
+                                    </div>
                                 </div>
-                                <span className="text-xs text-secondary font-medium uppercase tracking-wider">
-                                    {t(`explore.categories.${article.category}`) || article.category}
-                                </span>
-                            </div>
-                            <h3 className="text-lg font-serif font-bold text-white mb-2 group-hover:text-secondary transition-colors">
-                                {article.title}
-                            </h3>
-                            <p className="text-sm text-muted-foreground mb-4 line-clamp-2 font-light">
-                                {article.excerpt}
-                            </p>
-                            <div className="flex items-center justify-between text-xs text-muted-foreground border-t border-white/5 pt-3">
-                            <span className="text-white/60">@{article.author}</span>
-                            <div className="flex items-center gap-3">
-                                <span className="flex items-center gap-1 hover:text-red-400 transition-colors">
-                                <Heart className="w-3 h-3" />
-                                {article.likes}
-                                </span>
-                                <span className="flex items-center gap-1 hover:text-blue-400 transition-colors">
-                                <MessageCircle className="w-3 h-3" />
-                                {article.comments}
-                                </span>
-                            </div>
-                            </div>
-                        </motion.div>
-                        ))}
-                    </div>
+                            </motion.div>
+                            ))}
+                        </div>
+                    )}
                 </div>
             )}
         </motion.div>
