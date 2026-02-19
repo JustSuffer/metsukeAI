@@ -332,8 +332,6 @@ const ExplorePage = () => {
       // If we still don't have enough, fill with mock data
       if (combinedArticles.length < 20) {
          const needed = 20 - combinedArticles.length;
-         // Filter out any mock articles that mimic real ones by title/url if possible, but for now just appending slice
-         // Ideally prevent duplicates. 
          const uniqueMocks = mockNews.filter(m => !combinedArticles.some(r => r.url === m.url));
          combinedArticles = [...combinedArticles, ...uniqueMocks.slice(0, needed)];
       }
@@ -348,15 +346,14 @@ const ExplorePage = () => {
       localStorage.setItem("metsuke_news_cache", JSON.stringify(finalArticles));
       localStorage.setItem("metsuke_news_timestamp", new Date().toISOString());
 
-      if (finalArticles.length < 20) {
-          // Fallback if even logic failed remarkably
-          setNews(mockNews); 
-      }
-
     } catch (error) {
       console.error("Fetch Error:", error);
-      setNews(mockNews); // Ultimate fallback
-      toast.error("Haberler yüklenemedi, kayıtlı haberler gösteriliyor.");
+      // Fallback to mock news AND cache it to prevent retry loop on refresh
+      setNews(mockNews); 
+      localStorage.setItem("metsuke_news_cache", JSON.stringify(mockNews));
+      localStorage.setItem("metsuke_news_timestamp", new Date().toISOString());
+      
+      toast.warning("Güncel haberler alınamadı, arşiv gösteriliyor.");
     } finally {
       setIsLoadingNews(false);
     }
