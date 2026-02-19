@@ -5,7 +5,6 @@ import { ArrowLeft, Plus, FileText, Globe, ExternalLink, Download } from "lucide
 import logo from "@/assets/logo.png";
 import bgExplore from "@/assets/bg-explore.jpeg";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import ArticleSubmissionModal from "@/components/ArticleSubmissionModal";
 
@@ -273,87 +272,101 @@ const ExplorePage = () => {
       }
   }
 
+  // Fetch news logic: Centralized via Supabase 'daily_news' table
+  // 1. Calculate current news date (changes at 13:00)
+  // 2. Check DB for this date
+  // 3. If exists -> Use it
+  // 4. If not -> Fetch 20 from API -> Insert to DB -> Use it
+  // 5. On error -> Use local Mock data (don't insert to DB to allow retries)
+
   const checkAndFetchNews = async () => {
-    const cachedData = localStorage.getItem("metsuke_news_cache");
-    const lastFetchTime = localStorage.getItem("metsuke_news_timestamp");
-    
+    // Determine the "news date"
     const now = new Date();
-    const today13 = new Date();
-    today13.setHours(13, 0, 0, 0);
+    const targetDate = new Date(now);
     
-    const yesterday13 = new Date(today13);
-    yesterday13.setDate(yesterday13.getDate() - 1);
-
-    const validWindowStart = now >= today13 ? today13 : yesterday13;
-
-    if (cachedData && lastFetchTime) {
-        const fetchTime = new Date(lastFetchTime);
-        if (fetchTime >= validWindowStart) {
-             try {
-                const parsed = JSON.parse(cachedData);
-                // Ensure we have at least 20 items in cache
-                if (parsed.length >= 20) {
-                    setNews(parsed);
-                    return; 
-                }
-            } catch (e) {
-                console.error("Cache parse error", e);
-            }
-        }
+    // If before 13:00, show yesterday's news
+    if (now.getHours() < 13) {
+        targetDate.setDate(targetDate.getDate() - 1);
     }
+    const dateStr = targetDate.toISOString().split('T')[0];
 
-    // Refresh if no cache, stale, or insufficient items
-    fetchNews();
+    try {
+        // 1. Check DB
+        const { data: dbNews } = await supabase
+            .from('daily_news')
+            .select('*')
+            .eq('date', dateStr)
+            .single();
+
+        if (dbNews && dbNews.articles) {
+            console.log("News loaded from Supabase DB");
+            setNews(dbNews.articles as NewsItem[]);
+            return;
+        }
+
+        // 2. If not in DB, fetch from API
+        if (!isLoadingNews) {
+            await fetchAndSaveNews(dateStr);
+        }
+
+    } catch (e) {
+        console.error("News check error:", e);
+        // Silent fallback (no toast)
+        setNews(mockNews);
+    }
   };
 
-  const fetchNews = async () => {
-    if (isLoadingNews) return;
-    
+  const fetchAndSaveNews = async (dateStr: string) => {
     setIsLoadingNews(true);
     let combinedArticles: NewsItem[] = [];
 
     try {
-      // Sequential requests to avoid rate limits
+      // API Call 1
       const res1 = await fetch(`https://gnews.io/api/v4/top-headlines?category=technology&lang=tr&country=tr&max=10&page=1&apikey=${GNEWS_API_KEY}`);
       if (res1.ok) {
         const data1 = await res1.json();
         combinedArticles = [...combinedArticles, ...(data1.articles || [])];
       }
 
-      // Delay slightly before second request
+      // API Call 2
       await new Promise(resolve => setTimeout(resolve, 500));
-
       const res2 = await fetch(`https://gnews.io/api/v4/top-headlines?category=technology&lang=tr&country=tr&max=10&page=2&apikey=${GNEWS_API_KEY}`);
       if (res2.ok) {
         const data2 = await res2.json();
         combinedArticles = [...combinedArticles, ...(data2.articles || [])];
       }
 
-      // If we still don't have enough, fill with mock data
+      // Fill with Mock if needed
       if (combinedArticles.length < 20) {
          const needed = 20 - combinedArticles.length;
          const uniqueMocks = mockNews.filter(m => !combinedArticles.some(r => r.url === m.url));
          combinedArticles = [...combinedArticles, ...uniqueMocks.slice(0, needed)];
       }
 
-      // Remove duplicates
+      // Format & Deduplicate
       const uniqueArticles = Array.from(new Map(combinedArticles.map(item => [item.url || item.title, item])).values());
-      
-      // Ensure specific count
       const finalArticles = uniqueArticles.slice(0, 20);
 
+      // 3. Save to DB
+      const { error: insertError } = await supabase
+        .from('daily_news')
+        .insert({
+            date: dateStr,
+            articles: finalArticles
+        });
+
+      if (insertError) {
+          // If duplicate key error (another user inserted just now), ignore and maybe re-fetch?
+          // For simplicity, just use what we fetched. Sync happens next refresh.
+          console.warn("News insert warning (likely duplicate):", insertError);
+      }
+
       setNews(finalArticles);
-      localStorage.setItem("metsuke_news_cache", JSON.stringify(finalArticles));
-      localStorage.setItem("metsuke_news_timestamp", new Date().toISOString());
 
     } catch (error) {
-      console.error("Fetch Error:", error);
-      // Fallback to mock news AND cache it to prevent retry loop on refresh
+      console.error("News fetch error:", error);
+      // Silent fallback to mock
       setNews(mockNews); 
-      localStorage.setItem("metsuke_news_cache", JSON.stringify(mockNews));
-      localStorage.setItem("metsuke_news_timestamp", new Date().toISOString());
-      
-      toast.warning("Güncel haberler alınamadı, arşiv gösteriliyor.");
     } finally {
       setIsLoadingNews(false);
     }
