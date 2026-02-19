@@ -103,7 +103,7 @@ const ExplorePage = () => {
                  id: item.id,
                  title: item.title,
                  excerpt: item.abstract || item.content.substring(0, 100) + "...",
-                 author: "Anonim Üye", // Ideally fetch user profile
+                 author: "Anonim Üye", 
                  likes: item.view_count || 0,
                  comments: 0,
                  category: item.category || "Genel",
@@ -121,47 +121,66 @@ const ExplorePage = () => {
   }
 
   const checkAndFetchNews = async () => {
-    const cachedDate = localStorage.getItem("metsuke_news_date");
-    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    const cachedData = localStorage.getItem("metsuke_news_cache");
+    const lastFetchTime = localStorage.getItem("metsuke_news_timestamp");
     
-    if (cachedDate === today) {
-        const cachedNews = localStorage.getItem("metsuke_news_cache");
-        if (cachedNews) {
-            try {
-                const parsed = JSON.parse(cachedNews);
+    const now = new Date();
+    const today13 = new Date();
+    today13.setHours(13, 0, 0, 0);
+    
+    const yesterday13 = new Date(today13);
+    yesterday13.setDate(yesterday13.getDate() - 1);
+
+    // Determine the start of the current valid window (13:00 today or 13:00 yesterday)
+    const validWindowStart = now >= today13 ? today13 : yesterday13;
+
+    if (cachedData && lastFetchTime) {
+        const fetchTime = new Date(lastFetchTime);
+        // If we fetched AFTER the valid window started, the cache is fresh
+        if (fetchTime >= validWindowStart) {
+             try {
+                const parsed = JSON.parse(cachedData);
                 if (parsed.length > 0) {
                     setNews(parsed);
                     return; 
                 }
             } catch (e) {
                 console.error("Cache parse error", e);
-                localStorage.removeItem("metsuke_news_cache");
             }
         }
     }
 
-    fetchNews(today);
+    // Refresh if no cache or cache is stale
+    fetchNews();
   };
 
-  const fetchNews = async (dateKey: string) => {
+  const fetchNews = async () => {
     if (isLoadingNews) return;
     
     setIsLoadingNews(true);
     try {
-      const response = await fetch(
-        `https://gnews.io/api/v4/top-headlines?category=technology&lang=tr&country=tr&max=20&apikey=${GNEWS_API_KEY}`
-      );
-      
-      if (!response.ok) {
-         throw new Error(`HTTP error! status: ${response.status}`);
+      // GNews Free limit is 10 per request. We make 2 requests to get 20.
+      const [res1, res2] = await Promise.all([
+        fetch(`https://gnews.io/api/v4/top-headlines?category=technology&lang=tr&country=tr&max=10&page=1&apikey=${GNEWS_API_KEY}`),
+        fetch(`https://gnews.io/api/v4/top-headlines?category=technology&lang=tr&country=tr&max=10&page=2&apikey=${GNEWS_API_KEY}`)
+      ]);
+
+      if (!res1.ok && !res2.ok) {
+         throw new Error("Both API requests failed");
       }
       
-      const data = await response.json();
+      const data1 = res1.ok ? await res1.json() : { articles: [] };
+      const data2 = res2.ok ? await res2.json() : { articles: [] };
       
-      if (data.articles && data.articles.length > 0) {
-        setNews(data.articles);
-        localStorage.setItem("metsuke_news_cache", JSON.stringify(data.articles));
-        localStorage.setItem("metsuke_news_date", dateKey);
+      const combinedArticles = [...(data1.articles || []), ...(data2.articles || [])];
+      
+      // Remove duplicates based on URL just in case
+      const uniqueArticles = Array.from(new Map(combinedArticles.map(item => [item.url, item])).values());
+
+      if (uniqueArticles.length > 0) {
+        setNews(uniqueArticles);
+        localStorage.setItem("metsuke_news_cache", JSON.stringify(uniqueArticles));
+        localStorage.setItem("metsuke_news_timestamp", new Date().toISOString());
       } else {
         console.warn("GNews API returned no articles, using fallback.");
         setNews(mockNews);
