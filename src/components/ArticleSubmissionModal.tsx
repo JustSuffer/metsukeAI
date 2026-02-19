@@ -14,6 +14,7 @@ interface ArticleSubmissionModalProps {
 const ArticleSubmissionModal = ({ isOpen, onClose, onSuccess }: ArticleSubmissionModalProps) => {
   // const { t } = useTranslation(); // Removed unused
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     title: "",
     abstract: "",
@@ -125,7 +126,9 @@ const ArticleSubmissionModal = ({ isOpen, onClose, onSuccess }: ArticleSubmissio
 
     } catch (error: any) {
       console.error("Submission error:", error);
-      toast.error("Makale yayınlanırken bir hata oluştu: " + error.message);
+      const errorMessage = error.message || "Bilinmeyen bir hata oluştu.";
+      setError(errorMessage);
+      toast.error("Makale yayınlanırken bir hata oluştu: " + errorMessage);
     } finally {
       setLoading(false);
     }
@@ -152,6 +155,11 @@ const ArticleSubmissionModal = ({ isOpen, onClose, onSuccess }: ArticleSubmissio
               <h2 className="text-2xl font-serif font-bold text-white mb-6">Makale Oluştur</h2>
               
               <form onSubmit={handleSubmit} className="space-y-6">
+                {error && (
+                  <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm">
+                    {error}
+                  </div>
+                )}
                 {/* Title */}
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">Başlık</label>
