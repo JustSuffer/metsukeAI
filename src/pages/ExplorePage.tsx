@@ -74,17 +74,43 @@ const ExplorePage = () => {
 
   useEffect(() => {
     if (activeTab === "news") {
-      fetchNews();
+      checkAndFetchNews();
     }
   }, [activeTab]);
 
-  const fetchNews = async () => {
-    if (news.length > 0) return; 
+  const checkAndFetchNews = async () => {
+    const cachedDate = localStorage.getItem("metsuke_news_date");
+    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    
+    // Check if we have valid cache for TODAY
+    if (cachedDate === today) {
+        const cachedNews = localStorage.getItem("metsuke_news_cache");
+        if (cachedNews) {
+            try {
+                const parsed = JSON.parse(cachedNews);
+                if (parsed.length > 0) {
+                    setNews(parsed);
+                    return; // Use cache, don't fetch
+                }
+            } catch (e) {
+                console.error("Cache parse error", e);
+                localStorage.removeItem("metsuke_news_cache");
+            }
+        }
+    }
+
+    // If no cache or date changed, fetch new
+    fetchNews(today);
+  };
+
+  const fetchNews = async (dateKey: string) => {
+    if (isLoadingNews) return;
     
     setIsLoadingNews(true);
     try {
+      // Requests 20 articles
       const response = await fetch(
-        `https://gnews.io/api/v4/top-headlines?category=technology&lang=tr&country=tr&max=10&apikey=${GNEWS_API_KEY}`
+        `https://gnews.io/api/v4/top-headlines?category=technology&lang=tr&country=tr&max=20&apikey=${GNEWS_API_KEY}`
       );
       
       if (!response.ok) {
@@ -95,6 +121,9 @@ const ExplorePage = () => {
       
       if (data.articles && data.articles.length > 0) {
         setNews(data.articles);
+        // Save to cache
+        localStorage.setItem("metsuke_news_cache", JSON.stringify(data.articles));
+        localStorage.setItem("metsuke_news_date", dateKey);
       } else {
         console.warn("GNews API returned no articles, using fallback.");
         setNews(mockNews);
