@@ -19,11 +19,18 @@ const AuthPage = () => {
   const [configError, setConfigError] = useState(false);
 
   useEffect(() => {
+    // Check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        navigate("/chat");
+      }
+    });
+
     if (!isSupabaseConfigured) {
       setConfigError(true);
       toast.error(t('auth.configError'));
     }
-  }, [t]);
+  }, [t, navigate]);
 
   const handleGoogleSignIn = async () => {
     if (!isSupabaseConfigured) {

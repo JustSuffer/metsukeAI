@@ -4,11 +4,31 @@ import { useNavigate } from "react-router-dom";
 import logo from "@/assets/logo.png";
 import bgLanding from "@/assets/bg-landing.jpeg";
 import { useTranslation } from "react-i18next";
+import { useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 const LandingPage = () => {
   const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
   const { t } = useTranslation();
+
+  useEffect(() => {
+	    supabase.auth.getSession().then(({ data: { session } }) => {
+	      if (session) {
+	        navigate("/chat");
+	      }
+	    });
+	
+	    const {
+	      data: { subscription },
+	    } = supabase.auth.onAuthStateChange((_event, session) => {
+	      if (session) {
+	        navigate("/chat");
+	      }
+	    });
+	
+	    return () => subscription.unsubscribe();
+	  }, [navigate]);
 
   const features = [
     {
