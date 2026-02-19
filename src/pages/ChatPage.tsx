@@ -10,7 +10,6 @@ import {
   X,
   MessageSquare,
   LogOut,
-  User,
   FileUp,
   Globe,
   ShoppingBag,
@@ -91,7 +90,7 @@ const ChatPage = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from('chats')
         .select('*')
         .eq('user_id', user.id)
